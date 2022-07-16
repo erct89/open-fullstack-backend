@@ -7,7 +7,7 @@ import { requestUnknown } from './src/middlewares/request_unknown.middleware.js'
 
 const app = express();
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 const API_PATHS = {
   notes: '/api/notes',
