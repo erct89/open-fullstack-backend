@@ -28,7 +28,7 @@ APIs Root Path: [emi-open-fullstack.herokuapp.com](https://emi-open-fullstack.he
 * [PUT /api/notes/:id](#apis-put-notes-id)
 * [PATCH /api/notes/:id](#apis-patch-notes-id)
 
-### GET /api/notes {#apis-get-notes}
+### GET /api/notes <a id="#apis-get-notes"></a>
 
 Obtener todas las notas
 
