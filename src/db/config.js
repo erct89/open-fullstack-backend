@@ -1,15 +1,13 @@
 import mongoose from 'mongoose';
 
-const DB_USER = process.env.DB_USER;
-const DB_PASS = process.env.DB_PASS;
-const DB_NAME = process.env.DB_NAME;
-const MONGO_URL = `mongodb+srv://${DB_USER}:${DB_PASS}@openfullstack2022.ephxvav.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
-
+const MONGO_URL = process.env.MONGO_URL;
 
 export const dbConnection = async () => {
   try {
     console.log('[MONGO ATLAS DB][STATUS]: Connecting...');
+
     mongoose.connect(MONGO_URL);
+
     console.log('[MONGO ATLAS DB][STATUS]: Connected');
   } catch (error) {
     console.log('[MONGO ATLAS DB][STATUS]: Error connetion');
