@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import Contact from '../models/contact.model.js';
 
 /**
@@ -8,7 +7,7 @@ import Contact from '../models/contact.model.js';
  */
 export const getContacts = async (request, response) => {
   try {
-    const contacts = await Contact.getDataContacts();
+    const contacts = await Contact.find({});
     response.status(200).json({ data: contacts });
   } catch (error) {
     console.log('[ERROR][GET] contacts:', error);
@@ -34,16 +33,12 @@ export const createContact = async (request, response) => {
         .json({ message: 'Missing parameters in the request.' });
     }
 
-    const contacts = await Contact.getDataContacts();
-    const findContact = contacts.find(contactItem => contactItem.name === name);
+    const contact = new Contact({ name, number });
+    const contactResult = await contact.save();
 
-    if (findContact) {
-      return response
-        .status(400)
-        .json({ message: 'A contact with the same name already exists' });
-    }
+    console.log('contactResult');
+    console.log(contactResult);
 
-    const contact = await Contact.writeDataContact({id: uuidv4(), name, number, date: (new Date()).toISOString()});
     response.status(200).json({ data: contact });
   } catch (error) {
     console.log('[ERROR][POST] contacts:', error);

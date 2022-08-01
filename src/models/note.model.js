@@ -1,28 +1,11 @@
-import DB from '../db/index.js';
+import mongoose from 'mongoose';
 
-export class Note {
-  static get DB_PATH() {
-    return 'notes'
-  }
+const noteSchema = new mongoose.Schema({
+  content: { type: String, require: [true, 'Content is required'] },
+  date: { type: Date, default: Date.now },
+  important: { type: Boolean, default: false },
+  delete: { type: Boolean, default: false }
+});
 
-  static async writeDataNotes (notes) {
-    return await DB.writeDataBase(Note.DB_PATH,  notes);
-  }
-
-  static async writeDataNote (note) {
-    const notes = await Note.getDataNotes();
-    return await Note.writeDataNotes([...notes, note]);
-  }
-
-  static async getDataNotes () {
-    return await DB.readDataBase(Note.DB_PATH);
-  }
-
-  static async getDataNote (id) {
-    const notes = await Note.getDataNotes();
-    const note = notes.find(noteItem => `${noteItem.id}` === id);
-    return note;
-  }
-}
-
+export const Note = mongoose.model('Note', noteSchema);
 export default Note;

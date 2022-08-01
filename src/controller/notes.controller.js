@@ -1,4 +1,3 @@
-import {v4 as uuidv4} from 'uuid';
 import Note from '../models/note.model.js';
 
 /**
@@ -8,7 +7,7 @@ import Note from '../models/note.model.js';
  */
 export const getNotes = async (request, response) => {
   try {
-    const notes = await Note.getDataNotes();
+    const notes = await Note.find({});
     response.status(200).json(notes);
   } catch (error) {
     console.error(`[ERROR][GET] notes`);
@@ -24,13 +23,12 @@ export const getNotes = async (request, response) => {
  */
 export const createNote = async (request, response) => {
   try {
-    const id = uuidv4();
-    const {name, important} = request.body;
-    const newNote = {id, name, date: (new Date()).toISOString(), important: !!important}
+    const {content, important} = request.body;
+    const newNote = new Note({content, important});
 
-    const data = await Note.writeDataNote(newNote);
+    await newNote.save();
 
-    response.status(200).json({message: "Success Post", data});
+    response.status(200).json({message: "Success Post", newNote});
   } catch (error) {
     console.error(`[ERROR][POST][${request}]`);
     console.error(error);
