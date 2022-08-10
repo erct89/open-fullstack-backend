@@ -15,7 +15,8 @@ const PORT = process.env.PORT || 3000;
 
 const API_PATHS = {
   notes: '/api/notes',
-  contacts: '/api/contacts'
+  contacts: '/api/contacts',
+  search: '/api/search'
 };
 
 // Config middleware.
@@ -33,6 +34,7 @@ dbConnection();
 // Routers
 app.use(API_PATHS.notes, routes.notes);
 app.use(API_PATHS.contacts, routes.contacts);
+app.use(API_PATHS.search, routes.search);
 
 // Control URI Unknown
 app.use(requestUnknown);

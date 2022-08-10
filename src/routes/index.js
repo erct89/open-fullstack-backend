@@ -1,9 +1,11 @@
-import notesRoutes from './notes.router.js';
-import contactsRoutes from './contacts.router.js';
+import notesRoutes from './notes.routes.js';
+import contactsRoutes from './contacts.routes.js';
+import searchRoutes from './search.routes.js';
 
 export const routes = {
   notes: notesRoutes,
-  contacts: contactsRoutes
+  contacts: contactsRoutes,
+  search: searchRoutes
 };
 
 export default routes;
