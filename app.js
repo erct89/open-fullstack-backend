@@ -4,6 +4,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import routes from './src/routes/index.js';
 import { requestUnknown } from './src/middlewares/request_unknown.middleware.js';
+import { errorHandler } from './src/middlewares/errorHandler.middleware.js';
 import { dbConnection, dbCloseConnection } from './src/db/config.js';
 
 
@@ -38,6 +39,7 @@ app.use(API_PATHS.search, routes.search);
 
 // Control URI Unknown
 app.use(requestUnknown);
+app.use(errorHandler);
 
 // Listener
 app.listen( PORT, () => {

@@ -48,8 +48,9 @@ const COLLECTIONS = {
  * 
  * @param {Object} request 
  * @param {Object} response 
+ * @param {Function} next
  */
-export const search = async(request, response) => {
+export const search = async(request, response, next) => {
   const { collection, match } = request.params;
 
   const handleSearch = COLLECTIONS[collection];
@@ -63,7 +64,8 @@ export const search = async(request, response) => {
 
     response.status(200).json({ data });
   } catch(error) {
-    response.status(404).json({ error: 'Error - not found' });
+    console.log(`[ERROR][GET] search ${collection}`);
+    next(error);
   }
 };
 

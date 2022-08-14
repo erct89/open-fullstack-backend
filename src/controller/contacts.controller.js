@@ -4,17 +4,15 @@ import Contact from '../models/contact.model.js';
  * Handle GET /api/contacts
  * @param {Object} request
  * @param {Object} response
+ * @param {Function} next
  */
-export const getContacts = async (request, response) => {
+export const getContacts = async (request, response, next) => {
   try {
     const contacts = await Contact.find({});
     response.status(200).json({ data: contacts });
   } catch (error) {
-    console.log('[ERROR][GET] contacts:', error);
-    response.status(500).json({
-      message: 'Service error to get contacts',
-      error: JSON.stringify(error),
-    });
+    console.log('[ERROR][GET] contacts:');
+    next(error);
   }
 };
 
@@ -22,27 +20,24 @@ export const getContacts = async (request, response) => {
  * Handle POST /api/contacts
  * @param {Object} request
  * @param {Object} response
+ * @param {Function} next
  */
-export const createContact = async (request, response) => {
+export const createContact = async (request, response, next) => {
   try {
     const { name, phoneNumber } = request.body;
 
     if (!name || !phoneNumber) {
-      return response
-        .status(400)
+      return response.status(400)
         .json({ message: 'Missing parameters in the request.' });
     }
 
     const contact = new Contact({ name, phoneNumber });
     const contactResult = await contact.save();
 
-    response.status(200).json({ data: contact });
+    response.status(200).json({ data: contactResult });
   } catch (error) {
-    console.log('[ERROR][POST] contacts:', error);
-    response.status(500).json({
-      message: 'Service error to create contacts.',
-      error: JSON.stringify(error),
-    });
+    console.log('[ERROR][POST] contacts:');
+    next(error);
   }
 };
 
@@ -50,8 +45,9 @@ export const createContact = async (request, response) => {
  * Handle GET /api/contacts/:id
  * @param {Object} request
  * @param {Object} response
+ * @param {Function} next
  */
-export const getContact = async (request, response) => {
+export const getContact = async (request, response, next) => {
   const { id } = request.params;
 
   try {
@@ -60,10 +56,7 @@ export const getContact = async (request, response) => {
     response.status(200).json({ data });
   } catch (error) {
     console.log(`[ERROR][GET] contact`, error);
-    response.status(500).json({
-      message: 'Service error to get contacts',
-      error: JSON.stringify(error),
-    });
+    next(error);
   }
 };
 
@@ -71,8 +64,9 @@ export const getContact = async (request, response) => {
  * Handle PUT /api/contacts/:id
  * @param {Object} request
  * @param {Object} response
+ * @param {Function} next
  */
-export const updateContact = async(request, response) => {
+export const updateContact = async(request, response, next) => {
   try {
     const {id} = request.params;
     const {name, number, active = true} = request.body;
@@ -93,11 +87,8 @@ export const updateContact = async(request, response) => {
 
     response.status(200).json({ message: 'PUT CONTACT ID', data });
   } catch (error) {
-    console.log(`[ERROR][PUT] contact`, error);
-    response.status(500).json({
-      message: 'Service error to update contact',
-      error: JSON.stringify(error)
-    });
+    console.log(`[ERROR][PUT] contact`);
+    next(error);
   }
 };
 
@@ -105,8 +96,9 @@ export const updateContact = async(request, response) => {
  * Handle PATCH /api/contacts/:id
  * @param {Object} request
  * @param {Object} response
+ * @param {Function} next
  */
-export const modifyContact = async(request, response) => {
+export const modifyContact = async(request, response, next) => {
   const {id} = request.params;
   const {name, active, phoneNumber} = request.body;
   let proposal = {};
@@ -131,10 +123,8 @@ export const modifyContact = async(request, response) => {
     const data = await Contact.findByIdAndUpdate(id, proposal, { new: true });
     response.status(200).json({ message: 'OK', data });
   } catch (error) {
-    response.status(500).json({
-      message: 'Service error to update contact',
-      error: JSON.stringify(error)
-    });
+    console.log('[ERROR][PATH] contacts');
+    next(error);
   }
 };
 
@@ -142,17 +132,16 @@ export const modifyContact = async(request, response) => {
  * Handle DELETE /api/contacts/:id
  * @param {Object} request
  * @param {Object} response
+ * @param {Function} next
  */
-export const removeContact = async(request, response) => {
+export const removeContact = async(request, response, next) => {
   const {id} = request.params;
 
   try {
     const data = await Contact.findByIdAndDelete(id);
     response.status(200).json({ message: '[SUCCESS][DELETE][CONTACT]: Success', data });
   } catch (error) {
-    response.status(500).json({
-      message: 'Service error to delete contact',
-      error: JSON.stringify(error)
-    });
+    console.log('[ERROR][DELETE] contacts');
+    next(error)
   }
 };
