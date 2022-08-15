@@ -10,8 +10,10 @@ export const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     response.status(400).json({ message: 'Malformatted id' });
-  } 
-  
+  } else if (error.name === 'ValidationError') {
+    response.status(400).json({ message: error.message });
+  }
+
   next(error);
 };
 

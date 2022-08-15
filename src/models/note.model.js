@@ -1,8 +1,16 @@
 import mongoose from 'mongoose';
 
 const noteSchema = new mongoose.Schema({
-  content: { type: String, require: [true, 'Content is required'] },
-  date: { type: Date, default: Date.now },
+  content: {
+    type: String,
+    minLenght: 5,
+    required: [true, 'Content is required'],
+   },
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
   important: { type: Boolean, default: false },
   delete: { type: Boolean, default: false }
 });
