@@ -83,7 +83,7 @@ export const updateContact = async(request, response, next) => {
       return response.status(400).json({ message: 'Parameters do not comply with service agreements'});
     }
 
-    const data = await Contact.findByIdAndUpdate(id, { name, number, active }, { new: true });
+    const data = await Contact.findByIdAndUpdate(id, { name, number, active }, { new: true, runValidators: true });
 
     response.status(200).json({ message: 'PUT CONTACT ID', data });
   } catch (error) {
@@ -120,7 +120,7 @@ export const modifyContact = async(request, response, next) => {
       return response.status(400).json({ message: '[ERROR][PATCH][CONTACT]: Error in params', error: 'Bad request'})
     }
 
-    const data = await Contact.findByIdAndUpdate(id, proposal, { new: true });
+    const data = await Contact.findByIdAndUpdate(id, proposal, { new: true, runValidators: true });
     response.status(200).json({ message: 'OK', data });
   } catch (error) {
     console.log('[ERROR][PATH] contacts');

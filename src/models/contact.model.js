@@ -3,14 +3,12 @@ import mongoose from 'mongoose';
 const contactSchema = new mongoose.Schema({
   name: {
     type: String, 
-    minLenght: 3,
-    maxLength: 50,
+    minLength: 3,
     required: true 
   },
   phoneNumber: {
-    type: String, 
-    maxLength: 9,
-    minLenght: 9,
+    type: String,
+    minLength: 8,
     required: true 
   },
   active: {
