@@ -5,7 +5,7 @@ import 'dotenv/config';
 import routes from './src/routes/index.js';
 import { requestUnknown } from './src/middlewares/request_unknown.middleware.js';
 import { errorHandler } from './src/middlewares/errorHandler.middleware.js';
-import { dbConnection, dbCloseConnection } from './src/db/config.js';
+import { dbConnection } from './src/db/config.js';
 
 
 // Create express app
@@ -21,7 +21,7 @@ const API_PATHS = {
 };
 
 // Config middleware.
-morgan.token('body', (request, response) => JSON.stringify( request.body || ''));
+morgan.token('body', (request) => JSON.stringify( request.body || ''));
 
 // Middlewares
 app.use(cors());

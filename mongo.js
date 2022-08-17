@@ -20,6 +20,6 @@ const note = new  Note({
   important: false
 });
 
-note.save().then(result => {
+note.save().then(() => {
   mongoose.connection.close();
 });

@@ -1,9 +1,9 @@
 /**
- * 
- * @param {Object} error 
- * @param {Object} request 
- * @param {Object} response 
- * @param {Function} next 
+ *
+ * @param {Object} error
+ * @param {Object} request
+ * @param {Object} response
+ * @param {Function} next
  */
 export const errorHandler = (error, request, response, next) => {
   console.error(error);

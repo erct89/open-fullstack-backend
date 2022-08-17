@@ -2,14 +2,14 @@ import mongoose from 'mongoose';
 
 const contactSchema = new mongoose.Schema({
   name: {
-    type: String, 
+    type: String,
     minLength: 3,
-    required: true 
+    required: true
   },
   phoneNumber: {
     type: String,
     minLength: 8,
-    required: true 
+    required: true
   },
   active: {
     type: Boolean,

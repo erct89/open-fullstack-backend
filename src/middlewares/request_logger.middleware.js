@@ -1,9 +1,9 @@
 
 /**
  * request info
- * @param {Object} request 
- * @param {Object} response 
- * @param {Object} next 
+ * @param {Object} request
+ * @param {Object} response
+ * @param {Object} next
  */
 export const requestLogger = (request, response, next) => {
   console.log('--- Request info ---');
@@ -13,4 +13,4 @@ export const requestLogger = (request, response, next) => {
   console.log('--- ---');
 
   next();
-}
+};

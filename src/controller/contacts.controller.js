@@ -68,19 +68,19 @@ export const getContact = async (request, response, next) => {
  */
 export const updateContact = async(request, response, next) => {
   try {
-    const {id} = request.params;
-    const {name, number, active = true} = request.body;
+    const { id } = request.params;
+    const { name, number, active = true } = request.body;
 
     if (!name || typeof name !== 'string' && name.trim().length) {
-      return response.status(400).json({ message: 'Parameters do not comply with service agreements'});
+      return response.status(400).json({ message: 'Parameters do not comply with service agreements' });
     }
-    
+
     if (!number || typeof number !== 'string' && number.trim().length < 6) {
-      return response.status(400).json({ message: 'Parameters do not comply with service agreements'});
+      return response.status(400).json({ message: 'Parameters do not comply with service agreements' });
     }
-    
+
     if (typeof active !== Boolean) {
-      return response.status(400).json({ message: 'Parameters do not comply with service agreements'});
+      return response.status(400).json({ message: 'Parameters do not comply with service agreements' });
     }
 
     const data = await Contact.findByIdAndUpdate(id, { name, number, active }, { new: true, runValidators: true });
@@ -99,25 +99,25 @@ export const updateContact = async(request, response, next) => {
  * @param {Function} next
  */
 export const modifyContact = async(request, response, next) => {
-  const {id} = request.params;
-  const {name, active, phoneNumber} = request.body;
+  const { id } = request.params;
+  const { name, active, phoneNumber } = request.body;
   let proposal = {};
 
   try {
     if (typeof name === 'string' && name.trim().length > 0) {
-      proposal = {...proposal, name};
+      proposal = { ...proposal, name };
     }
 
     if (typeof phoneNumber === 'string' && phoneNumber.trim().length < 6) {
-      proposal = {...proposal, phoneNumber};
+      proposal = { ...proposal, phoneNumber };
     }
 
     if (typeof active === Boolean) {
-      proposal = {...proposal, active};
+      proposal = { ...proposal, active };
     }
 
     if (!Object.keys(proposal).length) {
-      return response.status(400).json({ message: '[ERROR][PATCH][CONTACT]: Error in params', error: 'Bad request'})
+      return response.status(400).json({ message: '[ERROR][PATCH][CONTACT]: Error in params', error: 'Bad request' });
     }
 
     const data = await Contact.findByIdAndUpdate(id, proposal, { new: true, runValidators: true });
@@ -135,13 +135,13 @@ export const modifyContact = async(request, response, next) => {
  * @param {Function} next
  */
 export const removeContact = async(request, response, next) => {
-  const {id} = request.params;
+  const { id } = request.params;
 
   try {
     const data = await Contact.findByIdAndDelete(id);
     response.status(200).json({ message: '[SUCCESS][DELETE][CONTACT]: Success', data });
   } catch (error) {
     console.log('[ERROR][DELETE] contacts');
-    next(error)
+    next(error);
   }
 };

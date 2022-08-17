@@ -4,7 +4,7 @@ import { Note } from '../models/note.model.js';
 
 /**
  * Search Contact for id, name or number
- * @param {String} match 
+ * @param {String} match
  */
 const searchContact = async(match) => {
   const isValidId = Mongoose.isValidObjectId(match);
@@ -20,11 +20,11 @@ const searchContact = async(match) => {
     $and: [{ delete: false }]
   });
   return data;
-}
+};
 
 /**
  * Search note for id or content.
- * @param {String} match 
+ * @param {String} match
  */
 const searchNote = async(match) => {
   const isValidId = Mongoose.isValidObjectId(match);
@@ -37,7 +37,7 @@ const searchNote = async(match) => {
   const regex = new RegExp(match, 'i');
   const data = await Note.find({ content: regex, delete: false });
   return data;
-}
+};
 
 const COLLECTIONS = {
   [Contact.collection.name]: searchContact,
@@ -45,9 +45,9 @@ const COLLECTIONS = {
 };
 
 /**
- * 
- * @param {Object} request 
- * @param {Object} response 
+ *
+ * @param {Object} request
+ * @param {Object} response
  * @param {Function} next
  */
 export const search = async(request, response, next) => {
@@ -56,7 +56,7 @@ export const search = async(request, response, next) => {
   const handleSearch = COLLECTIONS[collection];
 
   if (!handleSearch) {
-    response.status(404).json({ error: ''});
+    response.status(404).json({ error: '' });
   }
 
   try {
