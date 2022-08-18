@@ -1,11 +1,8 @@
 import { Router } from 'express';
 import { check, param } from 'express-validator';
-import * as contactsController from '../controller/contacts.controller.js';
-import {
-  isUniqueContactName,
-  isUniqueContactPhoneNumber,
-} from '../helpers/validationContact.helper.js';
-import validateFields from '../middlewares/validateFields..middleware.js';
+import * as contactsController from '../controllers/contacts.controller.js';
+import { isUniqueContactName, isUniqueContactPhoneNumber } from '../helpers/validationContact.helper.js';
+import validateFields from '../middlewares/validateFields.middleware.js';
 
 const router = new Router();
 

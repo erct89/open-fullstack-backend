@@ -1,12 +1,11 @@
+import Config from '../utils/config.js';
 import mongoose from 'mongoose';
-
-const MONGO_URL = process.env.MONGO_URL;
 
 export const dbConnection = async () => {
   try {
     console.log('[MONGO ATLAS DB][STATUS]: Connecting...');
 
-    mongoose.connect(MONGO_URL);
+    mongoose.connect(Config.MONGO_URL);
 
     console.log('[MONGO ATLAS DB][STATUS]: Connected');
   } catch (error) {
