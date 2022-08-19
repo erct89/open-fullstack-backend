@@ -1,4 +1,5 @@
 import Contact from '../models/contact.model.js';
+import Logger from '../utils/logger.js';
 
 /**
  * Handle GET /api/contacts
@@ -11,7 +12,7 @@ export const getContacts = async (request, response, next) => {
     const contacts = await Contact.find({});
     response.status(200).json({ data: contacts });
   } catch (error) {
-    console.log('[ERROR][GET] contacts:');
+    Logger.error('[ERROR][GET] contacts:');
     next(error);
   }
 };
@@ -36,7 +37,7 @@ export const createContact = async (request, response, next) => {
 
     response.status(200).json({ data: contactResult });
   } catch (error) {
-    console.log('[ERROR][POST] contacts:');
+    Logger.error('[ERROR][POST] contacts:');
     next(error);
   }
 };
@@ -55,7 +56,7 @@ export const getContact = async (request, response, next) => {
 
     response.status(200).json({ data });
   } catch (error) {
-    console.log(`[ERROR][GET] contact`, error);
+    Logger.error(`[ERROR][GET] contact`, error);
     next(error);
   }
 };
@@ -87,7 +88,7 @@ export const updateContact = async(request, response, next) => {
 
     response.status(200).json({ message: 'PUT CONTACT ID', data });
   } catch (error) {
-    console.log(`[ERROR][PUT] contact`);
+    Logger.error(`[ERROR][PUT] contact`);
     next(error);
   }
 };
@@ -123,7 +124,7 @@ export const modifyContact = async(request, response, next) => {
     const data = await Contact.findByIdAndUpdate(id, proposal, { new: true, runValidators: true });
     response.status(200).json({ message: 'OK', data });
   } catch (error) {
-    console.log('[ERROR][PATH] contacts');
+    Logger.error('[ERROR][PATH] contacts');
     next(error);
   }
 };
@@ -141,7 +142,7 @@ export const removeContact = async(request, response, next) => {
     const data = await Contact.findByIdAndDelete(id);
     response.status(200).json({ message: '[SUCCESS][DELETE][CONTACT]: Success', data });
   } catch (error) {
-    console.log('[ERROR][DELETE] contacts');
+    Logger.error('[ERROR][DELETE] contacts');
     next(error);
   }
 };

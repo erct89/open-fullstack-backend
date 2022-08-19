@@ -1,8 +1,9 @@
 import 'dotenv/config';
 
 export const API_PATHS = {
-  notes: '/api/notes',
+  blogs: '/api/blogs',
   contacts: '/api/contacts',
+  notes: '/api/notes',
   search: '/api/search'
 };
 
