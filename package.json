@@ -7,7 +7,7 @@
     "start": "node --inspect app.js",
     "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf ./public && cd ../frontend-ofs && npm run build --prod && cp -r build ../backend-ofs/public",
+    "build:ui": "rm -rf ./public && cd ../frontend-ofs && rm -rf ./build && npm run build --prod && cp -r build ../backend-ofs/public",
     "deploy": "git push origin main && git push heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m \"build(public): update frontend [OFS-DEVOPS]\" && npm run deploy",
     "logs:prod": "heroku logs --tail",
