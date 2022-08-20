@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node --inspect app.js",
     "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --verbose",
+    "test:one": "npm run test -- -t",
     "build:ui": "rm -rf ./public && cd ../frontend-ofs && rm -rf ./build && npm run build --prod && cp -r build ../backend-ofs/public",
     "deploy": "git push origin main && git push heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m \"build(public): update frontend [OFS-DEVOPS]\" && npm run deploy",
@@ -31,6 +32,10 @@
   },
   "devDependencies": {
     "eslint": "^8.22.0",
+    "jest": "^28.1.3",
     "nodemon": "^2.0.18"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
