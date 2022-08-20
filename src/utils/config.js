@@ -7,7 +7,10 @@ export const API_PATHS = {
   search: '/api/search'
 };
 
-export const MONGO_URL = process.env.MONGO_URL;
+export let MONGO_URL = process.env.MONGO_URL;
+if (process.env === 'test') {
+  MONGO_URL = process.env.TEST_MONGO_URL;
+}
 
 export const PORT = process.env.PORT || 3000;
 

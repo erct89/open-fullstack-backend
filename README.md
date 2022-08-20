@@ -28,6 +28,15 @@ APIs Root Path: [emi-open-fullstack.herokuapp.com](https://emi-open-fullstack.he
 * [PUT /api/notes/:id](#put-apinotesid)
 * [PATCH /api/notes/:id](#patch-apinotesid)
 
+**Blogs:**
+
+* [GET /api/blogs](#get-apinotes)
+* [GET /api/blogs/:id](#get-apinotesid)
+* [POST /api/blogs/:id](#post-apinotesid)
+* [DELETE /api/blogs/:id](#delete-apinotesid)
+* [PUT /api/blogs/:id](#put-apinotesid)
+* [PATCH /api/blogs/:id](#patch-apinotesid)
+
 ### GET /api/notes
 
 Obtener todas las notas
@@ -389,3 +398,9 @@ Ninguno
 | Command | Descripcion |
 |---------|-------------|
 | heroku logs -t | Ver el log de salida del servidor |
+
+## Notes Windows
+
+Si pruebas esta app en windows puede fallar porque le falta:
+
+`npm install --save-dev cross-env`
