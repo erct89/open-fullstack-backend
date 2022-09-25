@@ -50,7 +50,7 @@ const COLLECTIONS = {
  * @param {Object} response
  * @param {Function} next
  */
-export const search = async(request, response, next) => {
+export const search = async(request, response) => {
   const { collection, match } = request.params;
 
   const handleSearch = COLLECTIONS[collection];
@@ -59,14 +59,9 @@ export const search = async(request, response, next) => {
     response.status(404).json({ error: '' });
   }
 
-  try {
-    const data = await handleSearch(match);
+  const data = await handleSearch(match);
 
-    response.status(200).json({ data });
-  } catch(error) {
-    console.log(`[ERROR][GET] search ${collection}`);
-    next(error);
-  }
+  response.status(200).json({ data });
 };
 
 export default search;
