@@ -4,7 +4,9 @@
  * @param  {...any} args
  */
 export const info = (...args) => {
-  console.log(...args);
+  if (process.env.NODE_ENV !== 'test') {
+    console.log(...args);
+  }
 };
 
 /**
@@ -12,7 +14,9 @@ export const info = (...args) => {
  * @param  {...any} args
  */
 export const error = (...args) => {
-  console.error(...args);
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(...args);
+  }
 };
 
 export default {

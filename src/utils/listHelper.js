@@ -1,7 +1,5 @@
 
-export const dummy = () => {
-  return 1;
-};
+export const dummy = () => 1;
 
 /**
  * Calculate total likes of blog list.
