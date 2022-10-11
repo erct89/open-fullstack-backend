@@ -9,8 +9,9 @@ export const generateRandomID = async() => {
 };
 
 export const getNotes = async() => {
-  const notes = 
-}
+  const notes = await Note.find({});
+  return notes;
+};
 
 export const resetNotes = async() => await Note.deleteMany({});
 
@@ -19,6 +20,7 @@ export const initialNotes = async() =>
 
 export default {
   generateRandomID,
+  getNotes,
   initialNotes,
-  resetNotes,
+  resetNotes
 };

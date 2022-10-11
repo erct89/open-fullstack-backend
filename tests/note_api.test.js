@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
-import { generateRandomID, initialNotes, resetNotes } from './helpers/notes.helper.js';
-import Note from '../src/models/note.model.js';
+import { generateRandomID, initialNotes, resetNotes, getNotes } from './helpers/notes.helper.js';
 import Server from '../src/models/server.model.js';
 
 import { mocks } from './mocks/notes.mock.js';
@@ -16,7 +15,6 @@ describe('Suit notes api', () => {
 
   beforeEach(async() => {
     await resetNotes();
-    // await Promise.all(mocks.INITIAL_NOTES.map(async(dataNote) => await (new Note(dataNote)).save()));
     await initialNotes();
   });
 
@@ -63,7 +61,7 @@ describe('Suit notes api', () => {
     test('Should be increase the number of total notes by one, when saving a new note.', async() => {
       await api.post('/api/notes')
         .send(mocks.NEW_NOTE);
-      const response = await api.get('/api/notes');
+      const response = await getNotes();
       const allNotes = response.body.data;
 
       expect(allNotes).toHaveLength(mocks.INITIAL_NOTES.length + 1);
@@ -72,7 +70,7 @@ describe('Suit notes api', () => {
     test('The new note must exist in the database after being added', async() => {
       await api.post('/api/notes')
         .send(mocks.NEW_NOTE);
-      const response = await api.get('/api/notes');
+      const response = await getNotes();
       const allNotes = response.body.data;
 
       const allNotesContent = allNotes.map(note => note.content);
@@ -94,7 +92,7 @@ describe('Suit notes api', () => {
   describe('GET /api/notes/:id', () => {
 
     test('Note returned a json', async() => {
-      const response = await api.get('/api/notes');
+      const response = await getNotes();
       const firstNote = response.body.data[0];
 
       await api.get(`/api/notes/${firstNote.uid}`)
@@ -102,12 +100,28 @@ describe('Suit notes api', () => {
         .expect('Content-Type', /application\/json/);
     });
 
+    test('Should return a note', async() => {});
+
     test('Should return error, when get not exist id note', async() => {
       const fakeUID = await generateRandomID();
       await api.get(`/api/notes/${fakeUID}`)
         .expect(404)
         .expect('Content-Type', /application\/json/);
     });
+
+  });
+
+  describe('PUT /api/notes/:id', () => {});
+
+  describe('PATCH /api/notes/:id', () => {});
+
+  describe('DELETE /api/notes/:id', () => {
+
+    test('Note returned a json', async() => {});
+
+    test('Should remove a note, when exist note', async() => {});
+
+    test('Should remove a note, when exist note', async() => {});
 
   });
 
