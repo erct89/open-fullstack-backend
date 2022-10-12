@@ -61,8 +61,7 @@ describe('Suit notes api', () => {
     test('Should be increase the number of total notes by one, when saving a new note.', async() => {
       await api.post('/api/notes')
         .send(mocks.NEW_NOTE);
-      const response = await getNotes();
-      const allNotes = response.body.data;
+      const allNotes = await getNotes();
 
       expect(allNotes).toHaveLength(mocks.INITIAL_NOTES.length + 1);
     });
@@ -70,8 +69,7 @@ describe('Suit notes api', () => {
     test('The new note must exist in the database after being added', async() => {
       await api.post('/api/notes')
         .send(mocks.NEW_NOTE);
-      const response = await getNotes();
-      const allNotes = response.body.data;
+      const allNotes = await getNotes();
 
       const allNotesContent = allNotes.map(note => note.content);
 
@@ -83,8 +81,6 @@ describe('Suit notes api', () => {
         .send({})
         .expect(400)
         .expect('Content-Type', /application\/json/);
-
-      console.log(response.body.data);
     });
 
   });
@@ -92,15 +88,22 @@ describe('Suit notes api', () => {
   describe('GET /api/notes/:id', () => {
 
     test('Note returned a json', async() => {
-      const response = await getNotes();
-      const firstNote = response.body.data[0];
+      const allNotes = await getNotes();
+      const firstNote = allNotes[0];
 
-      await api.get(`/api/notes/${firstNote.uid}`)
+      await api.get(`/api/notes/${firstNote._id}`)
         .expect(200)
         .expect('Content-Type', /application\/json/);
     });
 
-    test('Should return a note', async() => {});
+    test('Should return a note', async() => {
+      const allNotes = await getNotes();
+      const note = allNotes[0];
+
+      const response = await api.get(`/api/notes/${note._id}`);
+
+      expect(response.body.data.uid).toBe(note._id.toString());
+    });
 
     test('Should return error, when get not exist id note', async() => {
       const fakeUID = await generateRandomID();
