@@ -1,0 +1,35 @@
+{
+  "common": {
+    "label-delete": "Delete",
+    "label-restart": "Restaurar",
+    "label-edit": "Edit",
+    "label-add": "Add",
+    "label-all": "All",
+    "label-important": "Important"
+  },
+  "notes-page": {
+    "notes": "Notes",
+    "header-note": "Create Note",
+    "header-page": "The Notes",
+    "header-create": "Create Note",
+    "header-edit": "Edit Note",
+    "empty-notes": "No Notes",
+    "error": {
+      "note-not-found": "!Note not found.",
+      "note-deleted-not-edit": "The note is deleted it cannot be edited."
+    },
+    "footer-message": "Note app, Developed by Emilio Añover García in 2022"
+  },
+  "contact-list": {
+    "contacts-list-empty-message": "No contacts saving.",
+    "contacts-list-header": "Contacts List"
+  },
+  "note-form": {
+    "label-note-input": "New Note:",
+    "label-note-important": "Is Important:",
+    "label-note-submit-button-create": "Add",
+    "label-note-submit-button-update": "Edit",
+    "label-note-exit-edit-mode-button": "Exit Edit Mode",
+    "placeholder-note-input": "Write your note here!"
+  }
+}
