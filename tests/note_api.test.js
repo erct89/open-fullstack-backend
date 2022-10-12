@@ -114,9 +114,12 @@ describe('Suit notes api', () => {
 
   });
 
-  describe('PUT /api/notes/:id', () => {});
+  describe('PUT /api/notes/:id', () => {
+    // TODO: Falta este test para continuar con los test de blogs_api.test.js
+  });
 
   describe('PATCH /api/notes/:id', () => {
+
     test('Note returned a json', async() => {
       const allNotes = await getNotes();
       const selectedNoteID = String(allNotes[0]._id);
@@ -175,8 +178,14 @@ describe('Suit notes api', () => {
       expect(modifyNote).toEqual(expect.objectContaining(body));
     });
 
-    // TODO: Comprobar que pasa cuando se modifica una nota que no existe.
+    test('Should returned a error, when exist not note', async() => {
+      const selectedNoteID = await generateRandomID();
 
+      await api.patch(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PATCH.BODY_DELETE)
+        .expect(404)
+        .expect('Content-Type', /application\/json/);
+    });
   });
 
   describe('DELETE /api/notes/:id', () => {

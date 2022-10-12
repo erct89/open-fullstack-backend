@@ -87,6 +87,10 @@ export const modifyNote = async(request, response) => {
 
   const data = await Note.findOneAndUpdate({ _id: uid }, noteToUpdated, { new: true });
 
+  if (!data) {
+    return response.status(404).json({ 'message': `Not found note ${uid}` });
+  }
+
   response.status(200).json({ data });
 };
 
