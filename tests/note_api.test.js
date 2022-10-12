@@ -77,7 +77,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should be return error, when saving a empty new note', async() => {
-      const response = await api.post('/api/notes')
+      await api.post('/api/notes')
         .send({})
         .expect(400)
         .expect('Content-Type', /application\/json/);
@@ -116,15 +116,104 @@ describe('Suit notes api', () => {
 
   describe('PUT /api/notes/:id', () => {});
 
-  describe('PATCH /api/notes/:id', () => {});
+  describe('PATCH /api/notes/:id', () => {
+    test('Note returned a json', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      await api.patch(`/api/notes/${selectedNoteID}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should modify property content of note, when exist note', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      const response = await api.patch(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PATCH.BODY_CONTENT);
+
+      const modifyNote = response.body.data;
+
+      expect(modifyNote.content).toBe(mocks.PATCH.BODY_CONTENT.content);
+    });
+
+    test('Should modify property important of note, when exist note', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      const response = await api.patch(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PATCH.BODY_IMPORTANT);
+
+      const modifyNote = response.body.data;
+
+      expect(modifyNote.important).toBe(mocks.PATCH.BODY_IMPORTANT.important);
+    });
+
+    test('Should modify property delete of note, when exist note', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      const response = await api.patch(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PATCH.BODY_DELETE);
+
+      const modifyNote = response.body.data;
+
+      expect(modifyNote.delete).toBe(mocks.PATCH.BODY_DELETE.delete);
+    });
+
+    test('Should modify any properties of note, when exist note', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+      const body = { ...mocks.PATCH.BODY_DELETE, ...mocks.PATCH.BODY_CONTENT };
+
+      const response = await api.patch(`/api/notes/${selectedNoteID}`)
+        .send(body);
+
+      const modifyNote = response.body.data;
+
+      expect(modifyNote).toEqual(expect.objectContaining(body));
+    });
+
+    // TODO: Comprobar que pasa cuando se modifica una nota que no existe.
+
+  });
 
   describe('DELETE /api/notes/:id', () => {
 
-    test('Note returned a json', async() => {});
+    test('Note returned a json', async() => {
+      const allNotes = await getNotes();
+      const firstNote = String(allNotes[0]._id);
 
-    test('Should remove a note, when exist note', async() => {});
+      console.log(`/api/notes/${firstNote}`);
+      await api.delete(`/api/notes/${firstNote}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
 
-    test('Should remove a note, when exist note', async() => {});
+    test('Should remove a note, when exist note', async() => {
+      const startNotes = await getNotes();
+      const firstNote = String(startNotes[0]._id);
+
+      const response = await api.delete(`/api/notes/${firstNote}`)
+        .expect(200);
+
+      const deleteNote = response.body.data;
+
+      expect(deleteNote.delete).toBe(true);
+    });
+
+    test('Should remove error, when not exist note', async() => {
+      const fakeUID = await generateRandomID();
+      let allNotes = await getNotes();
+
+      allNotes = allNotes.map(note => note._id.toString());
+
+      expect(allNotes).not.toContain(fakeUID);
+
+      await api.delete(`/api/notes/${fakeUID}`)
+        .expect(404);
+    });
 
   });
 

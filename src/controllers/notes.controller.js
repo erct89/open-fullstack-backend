@@ -77,6 +77,10 @@ export const modifyNote = async(request, response) => {
     noteToUpdated.important = body.important;
   }
 
+  if (typeof body.delete === 'boolean') {
+    noteToUpdated.delete = body.delete;
+  }
+
   if (typeof body.content === 'string' && body.content.trim().length) {
     noteToUpdated.content = body.content;
   }
@@ -93,15 +97,13 @@ export const modifyNote = async(request, response) => {
  * @param {Function} next
  */
 export const removeNote = async(request, response) => {
-  const id = request.params.id;
-  const notes = await Note.getDataNotes();
+  const uid = request.params.id;
+  const note = await Note.findById(uid);
 
-  const indexNoteToRemove = notes.findIndex(noteItem => `${noteItem.id}` === id);
-
-  if (indexNoteToRemove === -1) {
-    return response.status(404).json({ 'message': `Not found note ${id}.` });
+  if (!note || note?.delete) {
+    return response.status(404).json({ 'message': `Not found note ${uid}.` });
   }
 
-  await Note.writeDataNotes([...notes.slice(0, indexNoteToRemove),...notes.slice(indexNoteToRemove + 1)]);
-  response.status(200).json({ data: notes[indexNoteToRemove] });
+  const data = await Note.findByIdAndUpdate(uid, { delete: true }, { new: true });
+  response.status(200).json({ data });
 };
