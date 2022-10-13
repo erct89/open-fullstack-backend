@@ -20,6 +20,15 @@ export const mocks = {
     BODY_CONTENT: {
       content: 'Nota modificada con patch'
     }
+  },
+  PUT: {
+    BODY_SUCCESS: {
+      content: 'Put content sample',
+      important: true
+    },
+    BODY_ERROR: {
+      content: 'Put content sample'
+    }
   }
 };
 

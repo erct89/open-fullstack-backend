@@ -115,7 +115,48 @@ describe('Suit notes api', () => {
   });
 
   describe('PUT /api/notes/:id', () => {
-    // TODO: Falta este test para continuar con los test de blogs_api.test.js
+
+    test('Note returned a json', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      await api.put(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PUT.BODY_SUCCESS)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should modify selected note', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      const { body: { data } } = await api.put(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PUT.BODY_SUCCESS);
+
+      expect(data).toEqual(expect.objectContaining(mocks.PUT.BODY_SUCCESS));
+    });
+
+    test('Should returned error, when body is empty', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      await api.put(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PUT.BODY_ERROR)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should returned error, when note not exist', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = await generateRandomID();
+
+      const allNotesIDs = allNotes.map(note => String(note._id));
+      expect(allNotesIDs).not.toContain(selectedNoteID);
+
+      await api.put(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PUT.BODY_SUCCESS)
+        .expect(404);
+    });
   });
 
   describe('PATCH /api/notes/:id', () => {
