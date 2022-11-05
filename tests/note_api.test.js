@@ -115,7 +115,46 @@ describe('Suit notes api', () => {
   });
 
   describe('PUT /api/notes/:id', () => {
-    // TODO: Falta este test para continuar con los test de blogs_api.test.js
+
+    test('Note returned a json', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      await api.put(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PUT.BODY_SUCESS)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should modify content of note, when exist note', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      const response = await api.put(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PUT.BODY_SUCESS);
+
+      const modifyNote = response.body.data; 
+      expect(modifyNote).toMatchObject(mocks.PUT.BODY_SUCESS);
+    });
+
+    test('Should returned a 404 error, when exist not note', async() => {
+      const selectedNoteID = await generateRandomID();
+
+      await api.put(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PUT.BODY_SUCESS)
+        .expect(404)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should returned a 400 error, when body request is not completed', async() => {
+      const allNotes = await getNotes();
+      const selectedNoteID = String(allNotes[0]._id);
+
+      await api.put(`/api/notes/${selectedNoteID}`)
+        .send(mocks.PUT.BODY_ERROR)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+    });
   });
 
   describe('PATCH /api/notes/:id', () => {
