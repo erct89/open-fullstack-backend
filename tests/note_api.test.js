@@ -233,7 +233,6 @@ describe('Suit notes api', () => {
       const allNotes = await getNotes();
       const firstNote = String(allNotes[0]._id);
 
-      console.log(`/api/notes/${firstNote}`);
       await api.delete(`/api/notes/${firstNote}`)
         .expect(200)
         .expect('Content-Type', /application\/json/);
