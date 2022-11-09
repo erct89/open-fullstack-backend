@@ -30,7 +30,10 @@ export class Server {
     this.app.use(express.json());
     this.app.use(express.static('public'));
     morgan.token('body', (request) => JSON.stringify( request.body || ''));
-    this.app.use(morgan(':method :url :status :total-time[0] - :response-time ms :body'));
+    this.app.use(
+      morgan(':method :url :status :total-time[0] - :response-time ms :body', {
+        skip: () => process.env.NODE_ENV === 'test'
+      }));
   }
 
   async dbConnected() {

@@ -10,8 +10,11 @@ export const initialBlogs = async() => await Promise.all(mocks.INITIAL_BLOGS.map
 
 export const resetBlogs = async() => await Blog.deleteMany();
 
+export const getBlogTitle = ({title}) => title;
+
 export default {
   getBlogs,
+  getBlogTitle,
   initialBlogs,
   resetBlogs
 };

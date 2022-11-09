@@ -39,8 +39,16 @@ export const mocks = {
     }]
   },
   POST: {
-    BODY_SUCESS: {},
-    BODY_ERROR: {},
+    BODY_SUCESS: {
+      title: 'Roma soy yo',
+      author: 'Santiago Posteguillo',
+      url: 'https://www.santiagoposteguillo.es/'
+    },
+    BODY_EMPTY: {},
+    BODY_WITHOUT_TITLE: {
+      author: 'Santiago Posteguillo',
+      url: 'https://www.santiagoposteguillo.es/'
+    },
   }
 };
 
