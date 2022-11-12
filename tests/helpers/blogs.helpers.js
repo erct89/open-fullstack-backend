@@ -6,15 +6,34 @@ export const getBlogs = async() => {
   return blogs;
 };
 
-export const initialBlogs = async() => await Promise.all(mocks.INITIAL_BLOGS.map(async(data) => (new Blog(data)).save()));
+export const initialBlogs = async() =>
+  await Promise.all(mocks.INITIAL_BLOGS.map(async(data) => (new Blog(data)).save()));
 
-export const resetBlogs = async() => await Blog.deleteMany();
+export const resetBlogs = async() =>
+  await Blog.deleteMany();
 
-export const getBlogTitle = ({title}) => title;
+export const getBlogTitle = ({ title }) => title;
+
+export const getExistRandomBlog = async() => {
+  const blogs = await getBlogs();
+  const selectedRandomBlog = blogs[Math.floor(Math.random() * blogs.length )];
+
+  return selectedRandomBlog.toJSON();
+};
+
+export const getUnexistRandomBlog = async() => {
+  const blog = new Blog(mocks.FAKE_BLOG);
+  await blog.save();
+  await blog.remove();
+
+  return blog.toJSON();
+};
 
 export default {
   getBlogs,
   getBlogTitle,
+  getExistRandomBlog,
+  getUnexistRandomBlog,
   initialBlogs,
   resetBlogs
 };

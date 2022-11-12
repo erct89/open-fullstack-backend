@@ -1,4 +1,9 @@
 export const mocks = {
+  FAKE_BLOG: {
+    title: 'Fake title',
+    author: 'Fake author',
+    url: 'https://www.fakeurl.dev/api/blogs/titlio_01'
+  },
   INITIAL_BLOGS: [{
     title: 'Titulo 01',
     author: 'Perico De Los Palotes',

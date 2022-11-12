@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
-import { getBlogs, getBlogTitle, resetBlogs, initialBlogs } from './helpers/blogs.helpers.js';
+import helpers from './helpers/blogs.helpers.js';
 import Server from '../src/models/server.model.js';
 
 import { mocks } from './mocks/blogs.mock.js';
@@ -15,8 +15,8 @@ describe('Suite blogs api', () => {
   });
 
   beforeEach(async() => {
-    await resetBlogs();
-    await initialBlogs();
+    await helpers.resetBlogs();
+    await helpers.initialBlogs();
   });
 
   describe('GET /api/blogs', () => {
@@ -32,8 +32,8 @@ describe('Suite blogs api', () => {
         .expect('Content-Type', /application\/json/);
 
       const data = response.body.data;
-      const blogsUIDs = data.map(getBlogTitle).sort();
-      const expectedBlogsUIDs = mocks.GET.RESPONSE_SUCESS.map(getBlogTitle).sort();
+      const blogsUIDs = data.map(helpers.getBlogTitle).sort();
+      const expectedBlogsUIDs = mocks.GET.RESPONSE_SUCESS.map(helpers.getBlogTitle).sort();
 
       expect(blogsUIDs).toEqual(expectedBlogsUIDs);
     });
@@ -60,12 +60,12 @@ describe('Suite blogs api', () => {
     });
 
     test('Should be increment number of blogs, when create new blog', async() => {
-      const firstBlogs = await getBlogs();
+      const firstBlogs = await helpers.getBlogs();
 
       await api.post(API_PATH)
         .send(mocks.POST.BODY_SUCESS);
 
-      const updateBlogs = await getBlogs();
+      const updateBlogs = await helpers.getBlogs();
 
       expect(updateBlogs).toHaveLength(firstBlogs.length + 1);
     });
@@ -76,7 +76,7 @@ describe('Suite blogs api', () => {
 
       const newBlog = response.body.data;
 
-      const blogs = await getBlogs();
+      const blogs = await helpers.getBlogs();
       const blogsIDs = blogs.map(blog => String(blog._id));
 
       expect(blogsIDs).toContain(newBlog.uid);
@@ -109,6 +109,56 @@ describe('Suite blogs api', () => {
         .expect(400)
         .expect('Content-Type', /application\/json/);
     });
+  });
+
+  describe('GET /api/blogs/:id', () => {
+    test('Should returned application/json', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+
+      await api.get(`${API_PATH}/${randomBlog.uid}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should returned blog, when blog exist', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+      delete randomBlog.create;
+
+      const response = await api.get(`${API_PATH}/${randomBlog.uid}`);
+      const blog = response.body.data;
+      delete blog.create;
+
+      expect(blog).toMatchObject(randomBlog);
+    });
+
+    test('Should returned error 404, when blog not exist', async() => {
+      const randomBlog = await helpers.getUnexistRandomBlog();
+
+      await api.get(`${API_PATH}/${randomBlog.uid}`)
+        .expect(404);
+    });
+  });
+
+  describe('PUT /api/blogs/:id', () => {
+    test('Should returned application/json', async() => {});
+    test('Should be modify blog, when request body is good', async() => {});
+    test('Should return error 400, when body request not exist', async() => {});
+    test('Should return error 400, when body request has not all properties', async() => {});
+    test('Should return error 404, when blog id not exits', async() => {});
+  });
+
+  describe('PATCH /api/blogs/:id', () => {
+    test('Should returned application/json', async() => {});
+    test('Should be modify blog, when request body is good', async() => {});
+    test('Should return error 400, when body request not exist', async() => {});
+    test('Should return error 400, when body request has not all mandatory properties', async() => {});
+    test('Should return error 404, when blog id not exits', async() => {});
+  });
+
+  describe('DELETE /api/blogs/:id', () => {
+    test('Should returned application/json', async() => {});
+    test('Should returned blog, when blog exist', async() => {});
+    test('Should returned error 404, when blog not exist', async() => {});
   });
 
   afterAll(() => {

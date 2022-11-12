@@ -23,16 +23,16 @@ export const getBlogs = async (request, response, next) => {
  * @param {Object} response
  * @param {Function} next
  */
-export const getBlog = async (request, response, next) => {
+export const getBlog = async (request, response) => {
   const { id } = request.params;
 
-  try {
-    const blog = await Blog.findById(id);
-    response.json({ data: blog });
-  } catch (error) {
-    Logger.error('[ERROR][GET] blog');
-    next(error);
+  const blog = await Blog.findById(id);
+
+  if(!blog) {
+    return response.status(404).json({ 'message': `Not found note ${id}` });
   }
+
+  response.status(200).json({ data: blog });
 };
 
 /**
