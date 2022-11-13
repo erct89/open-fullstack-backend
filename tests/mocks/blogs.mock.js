@@ -1,4 +1,5 @@
 export const mocks = {
+  BODY_EMPTY: {},
   FAKE_BLOG: {
     title: 'Fake title',
     author: 'Fake author',
@@ -49,11 +50,34 @@ export const mocks = {
       author: 'Santiago Posteguillo',
       url: 'https://www.santiagoposteguillo.es/'
     },
-    BODY_EMPTY: {},
     BODY_WITHOUT_TITLE: {
       author: 'Santiago Posteguillo',
       url: 'https://www.santiagoposteguillo.es/'
     },
+  },
+  PATCH: {
+    BODY_TITLE: {
+      title: 'Modify patch title'
+    },
+    BODY_LIKES: {
+      likes: 4
+    },
+    BODY_RANDOM: {
+      random: 'asd'
+    }
+  },
+  PUT: {
+    BODY_SUCESS: {
+      title: 'Modify title',
+      author: 'Modify Modify Modify',
+      url: 'https://www.modify.dev',
+      likes: 3
+    },
+    BODY_WITHOUT_TITLE: {
+      author: 'Modify Modify Modify',
+      url: 'https://www.modify.dev',
+      likes: 3
+    }
   }
 };
 

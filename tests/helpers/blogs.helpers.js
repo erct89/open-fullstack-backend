@@ -18,7 +18,7 @@ export const getExistRandomBlog = async() => {
   const blogs = await getBlogs();
   const selectedRandomBlog = blogs[Math.floor(Math.random() * blogs.length )];
 
-  return selectedRandomBlog.toJSON();
+  return JSON.parse(JSON.stringify(selectedRandomBlog.toJSON()));
 };
 
 export const getUnexistRandomBlog = async() => {

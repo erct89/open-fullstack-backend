@@ -93,10 +93,10 @@ describe('Suite blogs api', () => {
     });
 
     test('Should be return error, when body is empty', async() => {
-      expect(mocks.POST.BODY_EMPTY).toEqual({});
+      expect(mocks.BODY_EMPTY).toEqual({});
 
       await api.post(API_PATH)
-        .send(mocks.POST.BODY_EMPTY)
+        .send(mocks.BODY_EMPTY)
         .expect(400)
         .expect('Content-Type', /application\/json/);
     });
@@ -140,19 +140,106 @@ describe('Suite blogs api', () => {
   });
 
   describe('PUT /api/blogs/:id', () => {
-    test('Should returned application/json', async() => {});
-    test('Should be modify blog, when request body is good', async() => {});
-    test('Should return error 400, when body request not exist', async() => {});
-    test('Should return error 400, when body request has not all properties', async() => {});
-    test('Should return error 404, when blog id not exits', async() => {});
+    test('Should returned application/json', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+
+      await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.PUT.BODY_SUCESS)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should be modify blog, when request body is good', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+      delete randomBlog.create;
+
+      const response = await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.PUT.BODY_SUCESS)
+        .expect(200);
+
+      const modifyBlog = response.body.data;
+      delete modifyBlog.create;
+
+      mocks.PUT.BODY_SUCESS.likes = randomBlog.likes + 1;
+
+      expect(modifyBlog).toMatchObject(mocks.PUT.BODY_SUCESS);
+    });
+
+    test('Should return error 400, when body request not exist', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+      delete randomBlog.create;
+
+      await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.BODY_EMPTY)
+        .expect(400);
+    });
+
+    test('Should return error 400, when body request has not all properties', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+      delete randomBlog.create;
+
+      await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.PUT.BODY_WITHOUT_TITLE)
+        .expect(400);
+    });
+
+    test('Should return error 404, when blog id not exits', async() => {
+      const randomBlog = await helpers.getUnexistRandomBlog();
+
+      await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.PUT.BODY_SUCESS)
+        .expect(404);
+    });
   });
 
   describe('PATCH /api/blogs/:id', () => {
-    test('Should returned application/json', async() => {});
-    test('Should be modify blog, when request body is good', async() => {});
-    test('Should return error 400, when body request not exist', async() => {});
-    test('Should return error 400, when body request has not all mandatory properties', async() => {});
-    test('Should return error 404, when blog id not exits', async() => {});
+    test('Should returned application/json', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+
+      await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.PATCH.BODY_TITLE)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should be modify blog, when request body is good', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+      delete randomBlog.create;
+
+      const response = await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.PATCH.BODY_TITLE);
+      const blog = response.body.data;
+      delete blog.create;
+
+      randomBlog.title = mocks.PATCH.BODY_TITLE.title;
+
+      expect(blog).toMatchObject(randomBlog);
+    });
+
+    test('Should return error 400, when body request not exist', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+
+      await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.BODY_EMPTY)
+        .expect(400);
+    });
+
+    test('Should return error 400, when body request has not all mandatory properties', async() => {
+      const randomBlog = await helpers.getExistRandomBlog();
+
+      await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.BODY_EMPTY)
+        .expect(400);
+    });
+
+    test('Should return error 404, when blog id not exits', async() => {
+      const randomBlog = await helpers.getUnexistRandomBlog();
+      delete randomBlog.create;
+
+      await api.put(`${API_PATH}/${randomBlog.uid}`)
+        .send(mocks.PATCH.BODY_RANDOM)
+        .expect(400);
+    });
   });
 
   describe('DELETE /api/blogs/:id', () => {

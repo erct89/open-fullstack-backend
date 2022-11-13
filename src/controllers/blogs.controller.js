@@ -5,7 +5,6 @@ import Logger from '../utils/logger.js';
  * Controller request to GET /blogs
  * @param {Object} request
  * @param {Object} response
- * @param {Function} next
  */
 export const getBlogs = async (request, response, next) => {
   try {
@@ -39,49 +38,41 @@ export const getBlog = async (request, response) => {
  * Controller request to POST /blogs
  * @param {Object} request
  * @param {Object} response
- * @param {Function} next
  */
-export const createBlog = async (request, response, next) => {
+export const createBlog = async (request, response) => {
   const { title, author, url } = request.body;
 
-  try {
-    const blog = new Blog({ title, author, url });
-    const newBlog = await blog.save();
-    response.json({ data: newBlog });
-  } catch (error) {
-    Logger.error('[ERROR][POST] blog');
-    next(error);
-  }
+  const blog = new Blog({ title, author, url });
+  const newBlog = await blog.save();
+  response.json({ data: newBlog });
 };
 
 /**
  * Controller request to PUT /blogs/:id
  * @param {Object} request
  * @param {Object} response
- * @param {Function} next
  */
-export const updateBlog = async (request, response, next) => {
+export const updateBlog = async (request, response) => {
   const { id } = request.params;
-  const { author, title, url, like } = request.body;
+  const { author, title, url, likes } = request.body;
 
-  try {
-    const blogSrc = await Blog.findById(id);
+  const blogSrc = await Blog.findById(id);
 
-    if (like) {
-      blogSrc.likes += 1;
-    }
-
-    const updateBlog = await Blog.findByIdAndUpdate(
-      id,
-      { author, title, url, likes: blogSrc.likes },
-      { new:true, runValidators: true }
-    );
-
-    response.json({ data: updateBlog });
-  } catch (error) {
-    Logger.error('[ERROR][PUT] Blog');
-    next(error);
+  if (!blogSrc) {
+    return response.status(404).json({ 'message': `Not found note ${id}` });
   }
+
+  if (likes) {
+    blogSrc.likes += 1;
+  }
+
+  const updateBlog = await Blog.findByIdAndUpdate(
+    id,
+    { author, title, url, likes: blogSrc.likes },
+    { new:true, runValidators: true }
+  );
+
+  response.status(200).json({ data: updateBlog });
 };
 
 /**
@@ -89,8 +80,30 @@ export const updateBlog = async (request, response, next) => {
  * @param {Object} request
  * @param {Object} response
  */
-export const modifyBlog = (request, response) => {
-  response.status(500).json({ error: 'Coming soon' });
+export const modifyBlog = async(request, response) => {
+  const { id } = request.params;
+  const { author, title, url, likes } = request.body;
+  const findBlog = await Blog.findById(id);
+
+  if (!findBlog) {
+    response.status(404).json({ 'message': `Not found note ${id}` });
+  }
+
+  const updateData = JSON.parse(JSON.stringify({ author, title, url, likes }));
+
+  if (likes < findBlog.likes) {
+    updateData.likes = findBlog.likes - 1;
+  } else if (likes > findBlog.likes) {
+    updateData.likes = findBlog.likes + 1;
+  }
+
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    id,
+    updateData,
+    { next: true, runValidators: true }
+  );
+
+  response.status(200).json(updatedBlog);
 };
 
 /**
