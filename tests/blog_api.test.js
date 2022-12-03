@@ -196,7 +196,7 @@ describe('Suite blogs api', () => {
     test('Should returned application/json', async() => {
       const randomBlog = await helpers.getExistRandomBlog();
 
-      await api.put(`${API_PATH}/${randomBlog.uid}`)
+      await api.patch(`${API_PATH}/${randomBlog.uid}`)
         .send(mocks.PATCH.BODY_TITLE)
         .expect(200)
         .expect('Content-Type', /application\/json/);
@@ -206,9 +206,10 @@ describe('Suite blogs api', () => {
       const randomBlog = await helpers.getExistRandomBlog();
       delete randomBlog.create;
 
-      const response = await api.put(`${API_PATH}/${randomBlog.uid}`)
+      const response = await api.patch(`${API_PATH}/${randomBlog.uid}`)
         .send(mocks.PATCH.BODY_TITLE);
       const blog = response.body.data;
+
       delete blog.create;
 
       randomBlog.title = mocks.PATCH.BODY_TITLE.title;

@@ -69,7 +69,7 @@ export const updateBlog = async (request, response) => {
   const updateBlog = await Blog.findByIdAndUpdate(
     id,
     { author, title, url, likes: blogSrc.likes },
-    { new:true, runValidators: true }
+    { new: true, runValidators: true }
   );
 
   response.status(200).json({ data: updateBlog });
@@ -100,10 +100,10 @@ export const modifyBlog = async(request, response) => {
   const updatedBlog = await Blog.findByIdAndUpdate(
     id,
     updateData,
-    { next: true, runValidators: true }
+    { new: true, runValidators: true }
   );
 
-  response.status(200).json(updatedBlog);
+  response.status(200).json({ data: updatedBlog });
 };
 
 /**
