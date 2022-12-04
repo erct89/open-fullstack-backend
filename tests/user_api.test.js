@@ -1,11 +1,23 @@
 import bcrypt from 'bcrypt';
-import User from '../src/models/user.model';
+import supertest from 'supertest';
+import Server from '../src/models/server.model.js';
+import User from '../src/models/user.model.js';
+import { initialBlogs } from './helpers/users.helpers';
 
 describe('Suite User api', () => {
-  beforeEach(async() => {
-    await User.deleteMany({});
+  let api;
 
-    const passwordHash = await bcrypt.hash('sekret', 10);
-    const user = new User({ name: '', userName: '', passwordHash});
+  beforeAll(() => {
+    const server = new Server();
+    api = supertest(server);
+  });
+
+  beforeEach(async() => {
+    await resetUser();
+    await initialUser();
+  });
+
+  describe('POST /api/users', () => {
+
   });
 });
