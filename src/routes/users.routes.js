@@ -3,17 +3,17 @@ import userController from '../controllers/users.controller.js';
 
 const router = new Router();
 
-router.get('/', userController.getNotes);
+router.get('/', userController.getUsers);
 
-router.post('/', userController.createNote);
+router.post('/', userController.createUser);
 
-router.get('/:id', userController.getNote);
+router.get('/:id', userController.getUser);
 
-router.put('/:id', userController.updateNote);
+router.put('/:id', userController.updateUser);
 
-router.patch('/:id', userController.modifyNote);
+router.patch('/:id', userController.modifyUser);
 
-router.delete('/:id', userController.removeNote);
+router.delete('/:id', userController.removeUser);
 
 export const usersRoutes = router;
 export default usersRoutes;

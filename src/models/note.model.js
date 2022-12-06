@@ -1,4 +1,4 @@
-import mongoose, { SchemaTypes } from 'mongoose';
+import mongoose from 'mongoose';
 
 const noteSchema = new mongoose.Schema({
   content: {
@@ -13,7 +13,7 @@ const noteSchema = new mongoose.Schema({
   },
   important: { type: Boolean, default: false },
   delete: { type: Boolean, default: false },
-  user: { type: SchemaTypes.ObjectId, ref: 'User' }
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 // Transformar los datos para quitar _id and __v.

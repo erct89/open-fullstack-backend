@@ -42,9 +42,10 @@ export class Server {
 
   routes() {
     this.app.use(Config.API_PATHS.blogs, routes.blogs);
-    this.app.use(Config.API_PATHS.notes, routes.notes);
     this.app.use(Config.API_PATHS.contacts, routes.contacts);
+    this.app.use(Config.API_PATHS.notes, routes.notes);
     this.app.use(Config.API_PATHS.search, routes.search);
+    this.app.use(Config.API_PATHS.users, routes.users);
     this.app.use(requestUnknown);
   }
 

@@ -1,9 +1,14 @@
-import bcrypt, { genSalt } from 'bcrypt';
+import bcrypt from 'bcrypt';
 import User from '../models/user.model.js';
 
-export const getNotes = (request, response) => {};
+export const getUsers = async(request, response) => {
+  const allUsers = await User.find({});
+  response.json({ data: allUsers });
+};
 
-export const createNote = async(request, response) => {
+export const getUser = (request, response) => {};
+
+export const createUser = async(request, response) => {
   const { name, userName, password } = request.body;
 
   if (!name || !userName || !password) {
@@ -23,8 +28,6 @@ export const createNote = async(request, response) => {
   response.json({ data: userSaved });
 };
 
-export const getUser = (request, response) => {};
-
 export const updateUser = (request, response) => {};
 
 export const modifyUser = (request, response) => {};
@@ -32,8 +35,8 @@ export const modifyUser = (request, response) => {};
 export const removeUser = (request, response) => {};
 
 export default {
-  getNotes,
-  createNote,
+  getUsers,
+  createUser,
   getUser,
   updateUser,
   modifyUser,

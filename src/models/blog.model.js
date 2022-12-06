@@ -1,4 +1,4 @@
-import mongoose, { SchemaTypes } from 'mongoose';
+import mongoose from 'mongoose';
 
 const blogSchema = new mongoose.Schema({
   author: {
@@ -25,7 +25,7 @@ const blogSchema = new mongoose.Schema({
     default: Date.now,
     required: true
   },
-  user: { type: SchemaTypes.ObjectId, ref: 'User' }
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 blogSchema.set('toJSON', {

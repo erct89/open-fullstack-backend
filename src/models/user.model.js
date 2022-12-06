@@ -1,22 +1,22 @@
-import mongoose, { Schema, SchemaTypes } from 'mongoose';
+import mongoose from 'mongoose';
 
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
   name: {
-    type: SchemaTypes.String,
+    type: mongoose.Schema.Types.String,
     unique: true
   },
   userName: {
-    type: SchemaTypes.String,
+    type: mongoose.Schema.Types.String,
     minLength: 3,
     required: [true, 'Content is required'],
     unique: true
   },
   passwordHash: {
-    type: SchemaTypes.String,
+    type: mongoose.Schema.Types.String,
     required: [true, 'Content is required'],
   },
-  blogs: [{ type: SchemaTypes.ObjectId, ref: 'Blog' }],
-  notes: [{ type: SchemaTypes.ObjectId, ref: 'Note' }]
+  blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }],
+  notes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Note' }]
 });
 
 UserSchema.set('toJSON', {
@@ -29,5 +29,5 @@ UserSchema.set('toJSON', {
   }
 });
 
-export const User = mongoose.model('User', UserSchema);
+export const User = new mongoose.model('User', UserSchema);
 export default User;
