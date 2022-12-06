@@ -133,7 +133,7 @@ describe('Suit notes api', () => {
       const response = await api.put(`/api/notes/${selectedNoteID}`)
         .send(mocks.PUT.BODY_SUCESS);
 
-      const modifyNote = response.body.data; 
+      const modifyNote = response.body.data;
       expect(modifyNote).toMatchObject(mocks.PUT.BODY_SUCESS);
     });
 
