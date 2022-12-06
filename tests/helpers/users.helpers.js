@@ -11,7 +11,7 @@ export const createUser = async({ name, userName, password }) => {
 export const reset = async() => await User.deleteMany({});
 
 export const initialize = async() => await Promise.all(mock.DB_INTIALIZED.map(async(userItem) => {
-  const user = await createUser(userItem)
+  const user = await createUser(userItem);
   return await user.save();
 }));
 
