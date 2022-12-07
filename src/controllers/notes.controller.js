@@ -1,4 +1,5 @@
 import Note from '../models/note.model.js';
+import User from '../models/user.model.js';
 
 /**
  * Handle GET /api/notes
@@ -7,7 +8,9 @@ import Note from '../models/note.model.js';
  * @param {Function} next
  */
 export const getNotes = async (request, response) => {
-  const notes = await Note.find({});
+  const notes = await Note.find({})
+    .populate('user', { userName: 1, name: 1 });
+
   response.status(200).json({ data: notes });
 };
 
@@ -18,10 +21,18 @@ export const getNotes = async (request, response) => {
  * @param {Function} next
  */
 export const createNote = async (request, response) => {
-  const { content, important } = request.body;
-  const newNote = new Note({ content, important });
+  const { content, important, userId } = request.body;
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return response.status(404).json({ 'message': 'Body request is not right' });
+  }
+  const newNote = new Note({ content, important, user: user._id });
 
   const note = await newNote.save();
+
+  user.notes = [...user.notes, note._id];
+  await user.save();
 
   response.status(200).json({ data: note });
 };
