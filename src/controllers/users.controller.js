@@ -1,6 +1,12 @@
 import bcrypt from 'bcrypt';
 import User from '../models/user.model.js';
 
+/**
+ * Get all users
+ * [GET] /api/users
+ * @param {Object} request
+ * @param {Object} response
+ */
 export const getUsers = async(request, response) => {
   const allUsers = await User.find({})
     .populate('notes', { content: 1, date: 1 });
@@ -10,10 +16,16 @@ export const getUsers = async(request, response) => {
 
 export const getUser = (request, response) => {};
 
+/**
+ * Create user
+ * [POST] /api/users
+ * @param {Object} request
+ * @param {Object} response
+ */
 export const createUser = async(request, response) => {
-  const { name, userName, password } = request.body;
+  const { name, userName, email, password } = request.body;
 
-  if (!name || !userName || !password) {
+  if (!name || !userName || !email || !password) {
     response.status(400).json({ 'message': 'Error to create user' });
   }
 
@@ -21,6 +33,7 @@ export const createUser = async(request, response) => {
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
   const user = new User({
+    email,
     name,
     userName,
     passwordHash

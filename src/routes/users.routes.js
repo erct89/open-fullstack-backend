@@ -1,11 +1,14 @@
 import { Router } from 'express';
+import { check } from 'express-validator';
 import userController from '../controllers/users.controller.js';
 
 const router = new Router();
 
 router.get('/', userController.getUsers);
 
-router.post('/', userController.createUser);
+router.post('/', [
+  check('email').exists().isEmail()
+], userController.createUser);
 
 router.get('/:id', userController.getUser);
 

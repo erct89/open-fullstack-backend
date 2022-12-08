@@ -5,7 +5,8 @@ export const API_PATHS = {
   contacts: '/api/contacts',
   notes: '/api/notes',
   search: '/api/search',
-  users: '/api/users'
+  users: '/api/users',
+  login: '/api/login'
 };
 
 export let MONGO_URL = process.env.MONGO_URL;

@@ -46,6 +46,7 @@ export class Server {
     this.app.use(Config.API_PATHS.notes, routes.notes);
     this.app.use(Config.API_PATHS.search, routes.search);
     this.app.use(Config.API_PATHS.users, routes.users);
+    this.app.use(Config.API_PATHS.login, routes.login);
     this.app.use(requestUnknown);
   }
 
