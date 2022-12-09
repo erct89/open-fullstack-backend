@@ -1,5 +1,16 @@
+import jwt from 'jsonwebtoken';
 import Note from '../models/note.model.js';
 import User from '../models/user.model.js';
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization');
+
+  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
+    return authorization.substring(7);
+  }
+
+  return null;
+};
 
 /**
  * Handle GET /api/notes
@@ -9,7 +20,7 @@ import User from '../models/user.model.js';
  */
 export const getNotes = async (request, response) => {
   const notes = await Note.find({})
-    .populate('user', { userName: 1, name: 1 });
+    .populate('user', { userName: 1, name: 1, email: 1 });
 
   response.status(200).json({ data: notes });
 };
@@ -21,12 +32,16 @@ export const getNotes = async (request, response) => {
  * @param {Function} next
  */
 export const createNote = async (request, response) => {
-  const { content, important, userId } = request.body;
-  const user = await User.findById(userId);
+  const token = getTokenFrom(request);
+  const decoderToken = jwt.verify(token, process.env.SECRET);
 
-  if (!user) {
-    return response.status(404).json({ 'message': 'Body request is not right' });
+  const { content, important } = request.body;
+  const user = await User.findOne({ email: decoderToken.email });
+
+  if (!token && !decoderToken.email || !user) {
+    return response.status(401).json({ error: '401', data: { message: 'Unauthorized, missing token or invalid' } });
   }
+
   const newNote = new Note({ content, important, user: user._id });
 
   const note = await newNote.save();
@@ -45,7 +60,8 @@ export const createNote = async (request, response) => {
  */
 export const getNote = async(request, response) => {
   const uid = request.params.id;
-  const note = await Note.findById(uid);
+  const note = await Note.findById(uid)
+    .populate('user', { userName: 1, name: 1, email: 1 });
 
   if (!note) {
     return response.status(404).json({ 'message': `Not found note ${uid}` });
