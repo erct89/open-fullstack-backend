@@ -2,10 +2,10 @@ import bcrypt from 'bcrypt';
 import User from '../../src/models/user.model.js';
 import mock from '../mocks/users.mock.js';
 
-export const createUser = async({ name, userName, password }) => {
+export const createUser = async({ name, email, password }) => {
   const salt = 10;
   const passwordHash = await bcrypt.hash(password, salt);
-  return new User({ name, userName, passwordHash });
+  return new User({ name, email, passwordHash });
 };
 
 export const reset = async() => await User.deleteMany({});

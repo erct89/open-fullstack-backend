@@ -1,5 +1,6 @@
 import supertest from 'supertest';
 import Server from '../src/models/server.model.js';
+import User from '../src/models/user.model.js';
 import mock from './mocks/users.mock.js';
 import helpers from './helpers/users.helpers';
 
@@ -27,15 +28,15 @@ describe('Suite User api', () => {
     });
 
     test('Should be return array of users', async() => {
+      const MOCKS_USER_EMAILS = MOCK_GET.RESPONSE.SUCESS.map(userItem => userItem.email).sort();
       const allUsers = await helpers.getAllUsers();
       const response = await api.get(API_PATH);
 
-      const users = response.body.data;
-
-      users.forEach(userItem => delete userItem.uid);
+      let users = response.body.data;
+      users = users.map(userItem => userItem.email);
 
       expect(users).toHaveLength(allUsers.length);
-      expect(users.sort()).toEqual(MOCK_GET.RESPONSE.SUCESS.sort());
+      expect(users.sort()).toEqual(MOCKS_USER_EMAILS);
     });
   });
 
@@ -59,6 +60,60 @@ describe('Suite User api', () => {
       expect(newUser).toMatchObject(MOCK_POST.RESPONSE.BODY.SUCESS);
     });
 
-    //TODO:
+    test('Should be return error 400, when body request has not email property', async() => {
+      const MOCK_REQUEST_USER = MOCK_POST.getUserWithout(MOCK_POST.REQUEST.BODY.SUCESS, 'email');
+
+      await api.post(API_PATH)
+        .send(MOCK_REQUEST_USER)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should be return error 400, when body request has not name property', async() => {
+      const MOCK_REQUEST_USER = MOCK_POST.getUserWithout(MOCK_POST.REQUEST.BODY.SUCESS, 'name');
+
+      await api.post(API_PATH)
+        .send(MOCK_REQUEST_USER)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should be return error 400, when body request has not password property', async() => {
+      const MOCK_REQUEST_USER = MOCK_POST.getUserWithout(MOCK_POST.REQUEST.BODY.SUCESS, 'password');
+
+      await api.post(API_PATH)
+        .send(MOCK_REQUEST_USER)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should be return error 400, when body request has password property minor to 8 charactes', async() => {
+      const MOCK_REQUEST_USER = { ...MOCK_POST.REQUEST.SUCESS, password: MOCK_POST.REQUEST.BODY.SUCESS.password.slice(0,2) };
+
+      await api.post(API_PATH)
+        .send(MOCK_REQUEST_USER)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('Should be return error 400, when body request has duplicate email property', async() => {
+      const DB_USERS = await helpers.getAllUsers();
+      const DB_FIRST_USER = DB_USERS[0];
+      const MOCK_DUPLICATE_USER = { ...MOCK_POST.REQUEST.SUCESS, email: DB_FIRST_USER.email };
+
+      await api.post(API_PATH)
+        .send(MOCK_DUPLICATE_USER)
+        .expect(400);
+    });
+
+    test('Should be return error 400, when body request has duplicate name property', async() => {
+      const DB_USERS = await helpers.getAllUsers();
+      const DB_FIRST_USER = DB_USERS[0];
+      const MOCK_DUPLICATE_USER = { ...MOCK_POST.REQUEST.SUCESS, name: DB_FIRST_USER.name };
+
+      await api.post(API_PATH)
+        .send(MOCK_DUPLICATE_USER)
+        .expect(400);
+    });
   });
 });

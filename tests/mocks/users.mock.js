@@ -3,13 +3,11 @@ export const mock = {
     {
       email: 'alexa_feeney@gmail.com',
       name: 'Alexa Feeney',
-      userName: 'afeeney',
       password: 'Robust'
     },
     {
       email: 'naomi_torphy@hotmail.com',
       name: 'Naomi Torphy',
-      userName: 'naotir',
       password: 'Incredible'
     }
   ],
@@ -19,14 +17,12 @@ export const mock = {
         {
           email: 'naomi_torphy@hotmail.com',
           name: 'Naomi Torphy',
-          userName: 'naotir',
           blogs: [],
           notes: []
         },
         {
           email: 'alexa_feeney@gmail.com',
           name: 'Alexa Feeney',
-          userName: 'afeeney',
           blogs: [],
           notes: []
         }
@@ -39,8 +35,7 @@ export const mock = {
         SUCESS: {
           email: 'jose_gg@gmail.com',
           name: 'Jose García García',
-          userName: 'JoseGG',
-          password: 'qwerty'
+          password: 'berkshire'
         }
       }
     },
@@ -49,11 +44,17 @@ export const mock = {
         SUCESS: {
           email: 'jose_gg@gmail.com',
           name: 'Jose García García',
-          userName: 'JoseGG',
           blogs: [],
           notes: []
         }
       }
+    },
+    getUserWithout: (user, key) => {
+      const newUser = { ...user };
+
+      delete newUser[key];
+
+      return newUser;
     }
   }
 };
