@@ -20,7 +20,7 @@ const getTokenFrom = request => {
  */
 export const getNotes = async (request, response) => {
   const notes = await Note.find({})
-    .populate('user', { userName: 1, name: 1, email: 1 });
+    .populate('user', { name: 1, email: 1 });
 
   response.status(200).json({ data: notes });
 };
@@ -61,7 +61,7 @@ export const createNote = async (request, response) => {
 export const getNote = async(request, response) => {
   const uid = request.params.id;
   const note = await Note.findById(uid)
-    .populate('user', { userName: 1, name: 1, email: 1 });
+    .populate('user', { name: 1, email: 1 });
 
   if (!note) {
     return response.status(404).json({ 'message': `Not found note ${uid}` });
