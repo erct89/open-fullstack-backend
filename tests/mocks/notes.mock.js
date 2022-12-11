@@ -1,5 +1,10 @@
 
 export const mocks = {
+  INITIAL_USER: {
+    name: 'John Hessel',
+    email: 'john_hessel@gmail.com',
+    password: 'override'
+  },
   INITIAL_NOTES: [
     {
       content: 'Http Get is a method',

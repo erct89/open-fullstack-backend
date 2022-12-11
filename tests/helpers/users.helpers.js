@@ -8,6 +8,8 @@ export const createUser = async({ name, email, password }) => {
   return new User({ name, email, passwordHash });
 };
 
+export const getUser = async(email) => await User.findOne({ email });
+
 export const reset = async() => await User.deleteMany({});
 
 export const initialize = async() => await Promise.all(mock.DB_INTIALIZED.map(async(userItem) => {
@@ -21,7 +23,8 @@ export const getAllUsers = async() => {
 };
 
 export default {
-  reset,
+  createUser,
+  getAllUsers,
   initialize,
-  getAllUsers
+  reset
 };
