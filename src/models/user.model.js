@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+export const UserSchema = new mongoose.Schema({
   email: {
     type: mongoose.Schema.Types.String,
     required: true,
@@ -8,16 +8,13 @@ const UserSchema = new mongoose.Schema({
   },
   name: {
     type: mongoose.Schema.Types.String,
-    unique: true
-  },
-  userName: {
-    type: mongoose.Schema.Types.String,
     minLength: 3,
-    required: [true, 'Content is required'],
+    requited: true,
     unique: true
   },
   passwordHash: {
     type: mongoose.Schema.Types.String,
+    minLength: 3,
     required: [true, 'Content is required'],
   },
   blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }],

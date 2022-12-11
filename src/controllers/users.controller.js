@@ -23,9 +23,9 @@ export const getUser = (request, response) => {};
  * @param {Object} response
  */
 export const createUser = async(request, response) => {
-  const { name, userName, email, password } = request.body;
+  const { name, email, password } = request.body;
 
-  if (!name || !userName || !email || !password) {
+  if (!name || !email || !password) {
     response.status(400).json({ 'message': 'Error to create user' });
   }
 
@@ -35,12 +35,11 @@ export const createUser = async(request, response) => {
   const user = new User({
     email,
     name,
-    userName,
     passwordHash
   });
   const userSaved = await user.save();
 
-  response.json({ data: userSaved });
+  response.status(200).json({ data: userSaved });
 };
 
 export const updateUser = (request, response) => {};
