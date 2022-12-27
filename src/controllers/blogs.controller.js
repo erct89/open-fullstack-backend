@@ -8,7 +8,9 @@ import Logger from '../utils/logger.js';
  */
 export const getBlogs = async (request, response, next) => {
   try {
-    const blogs = await Blog.find({});
+    const user = request.user;
+    const blogs = await Blog.find({ user: user._id });
+
     response.json({ data: blogs });
   } catch (error) {
     Logger.error('[ERROR][GET] blogs');
@@ -40,9 +42,10 @@ export const getBlog = async (request, response) => {
  * @param {Object} response
  */
 export const createBlog = async (request, response) => {
+  const user = request.user;
   const { title, author, url } = request.body;
 
-  const blog = new Blog({ title, author, url });
+  const blog = new Blog({ title, author, url, user: user._id });
   const newBlog = await blog.save();
   response.json({ data: newBlog });
 };
