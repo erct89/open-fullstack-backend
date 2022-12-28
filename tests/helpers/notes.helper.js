@@ -1,8 +1,6 @@
-import jwt from 'jsonwebtoken';
 import { Note } from '../../src/models/note.model.js';
+import userHelpers from './users.helpers.js';
 import mocks from '../mocks/notes.mock.js';
-
-export const generateToken = user => jwt.sign({ email: user.email, id: user._id }, process.env.SECRET);
 
 export const generateRandomID = async() => {
   const fakeNote = new Note(mocks.FAKE_NOTE);
@@ -18,13 +16,21 @@ export const getNotes = async() => {
 
 export const resetNotes = async() => await Note.deleteMany({});
 
-export const initialNotes = async(user) => {
+export const initialize = async() => {
+  await userHelpers.reset();
+  await userHelpers.initialize([mocks.INITIAL_USER]);
+
+  const users = await userHelpers.getAllUsers();
+  const user = users[0];
+
   await Promise.all(mocks.INITIAL_NOTES.map(async note => await (new Note({ ...note, user: user._id })).save()));
+
+  return user;
 };
 
 export default {
   generateRandomID,
   getNotes,
-  initialNotes,
+  initialize,
   resetNotes
 };

@@ -1,6 +1,5 @@
 import supertest from 'supertest';
 import Server from '../src/models/server.model.js';
-import User from '../src/models/user.model.js';
 import mock from './mocks/users.mock.js';
 import helpers from './helpers/users.helpers';
 
@@ -15,7 +14,7 @@ describe('Suite User api', () => {
 
   beforeEach(async() => {
     await helpers.reset();
-    await helpers.initialize();
+    await helpers.initialize(mock.DB_INTIALIZED);
   });
 
   describe('GET /api/users', () => {

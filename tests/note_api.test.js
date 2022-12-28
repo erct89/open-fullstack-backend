@@ -1,21 +1,29 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
-import { generateRandomID, initialNotes, resetNotes, getNotes } from './helpers/notes.helper.js';
+import { generateRandomID, initialize, resetNotes, getNotes } from './helpers/notes.helper.js';
 import Server from '../src/models/server.model.js';
 
 import { mocks } from './mocks/notes.mock.js';
 
 describe('Suit notes api', () => {
-  let api;
+  let api, user, token;
 
   beforeAll(() => {
     const server = new Server();
     api = supertest(server.app);
   });
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     await resetNotes();
-    await initialNotes();
+    user = await initialize();
+
+    const userResponse = await api.post('/api/login')
+      .send({
+        email: mocks.INITIAL_USER.email,
+        password: mocks.INITIAL_USER.password
+      });
+
+    token = `Bearer ${userResponse.body.data.token}`;
   });
 
   describe('GET /api/notes', () => {
@@ -53,13 +61,15 @@ describe('Suit notes api', () => {
 
     test('Notes are returned json', async() => {
       await api.post('/api/notes')
-        .send(mocks.NEW_NOTE)
+        .send({ ...mocks.NEW_NOTE, user: user._id })
+        .set('Authorization', token)
         .expect(200)
         .expect('Content-Type', /application\/json/);
     });
 
     test('Should be increase the number of total notes by one, when saving a new note.', async() => {
       await api.post('/api/notes')
+        .set('Authorization', token)
         .send(mocks.NEW_NOTE);
       const allNotes = await getNotes();
 

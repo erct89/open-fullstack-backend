@@ -6,7 +6,10 @@ import mongoose from 'mongoose';
  * @param {Function} next
  */
 const populateUsersMiddleware = async (docs, next) => {
-  await docs.map(async (doc) => await doc.populate('user', { name: 1, email: 1 }));
+  for(let doc of docs) {
+    await doc.populate('user', { name: 1, email: 1 });
+  }
+
   next();
 };
 
@@ -16,7 +19,10 @@ const populateUsersMiddleware = async (docs, next) => {
  * @param {Function} next
  */
 const populateUserMiddleware = async (doc, next) => {
-  await doc.populate('user', { name: 1, email: 1 });
+  if (doc) {
+    await doc.populate('user', { name: 1, email: 1 });
+  }
+
   next();
 };
 

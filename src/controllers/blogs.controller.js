@@ -26,8 +26,9 @@ export const getBlogs = async (request, response, next) => {
  */
 export const getBlog = async (request, response) => {
   const { id } = request.params;
+  const user = request.user;
 
-  const blog = await Blog.findById(id);
+  const blog = await Blog.findOne({ _id: id, user: user._id });
 
   if(!blog) {
     return response.status(404).json({ 'message': `Not found note ${id}` });
@@ -115,17 +116,17 @@ export const modifyBlog = async(request, response) => {
  * @param {Object} response
  * @param {Function} next
  */
-export const removeBlog = async (request, response, next) => {
+export const removeBlog = async (request, response) => {
   const { id } = request.params;
+  const user = request.user;
 
-  try {
-    const data = await Blog.findByIdAndRemove(id);
+  const data = await Blog.findByIdAndRemove(id, { user: user._id });
 
-    response.json({ data });
-  } catch (error) {
-    Logger.error('[ERROR][DELETE] Blog');
-    next(error);
+  if (!data) {
+    response.status(404).json({ message: 'Not found' });
   }
+
+  response.json({ data });
 };
 
 export default {
