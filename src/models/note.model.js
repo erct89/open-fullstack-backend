@@ -26,5 +26,34 @@ noteSchema.set('toJSON', {
   }
 });
 
+/**
+ * Middleware to populate user
+ * @param {Array[Object]} docs
+ * @param {Function} next
+ */
+const populateUsersMiddleware = async (docs, next) => {
+  for(let doc of docs) {
+    await doc.populate('user', { name: 1, email: 1 });
+  }
+
+  next();
+};
+
+/**
+ * Middleware to populate user
+ * @param {Object} doc
+ * @param {Function} next
+ */
+const populateUserMiddleware = async (doc, next) => {
+  if (doc) {
+    await doc.populate('user', { name: 1, email: 1 });
+  }
+
+  next();
+};
+
+noteSchema.post(['find', 'findById'], populateUsersMiddleware);
+noteSchema.post(['save', 'findOne', 'findOneAndDelete', 'findOneAndRemove', 'findOneAndReplace'], populateUserMiddleware);
+
 export const Note = mongoose.model('Note', noteSchema);
 export default Note;

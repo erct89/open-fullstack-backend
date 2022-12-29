@@ -2,8 +2,8 @@ import { Note } from '../../src/models/note.model.js';
 import userHelpers from './users.helpers.js';
 import mocks from '../mocks/notes.mock.js';
 
-export const generateRandomID = async() => {
-  const fakeNote = new Note(mocks.FAKE_NOTE);
+export const generateRandomID = async(user) => {
+  const fakeNote = new Note({ ...mocks.FAKE_NOTE, user: user._id });
   await fakeNote.save();
   await fakeNote.remove();
   return fakeNote._id.toString();

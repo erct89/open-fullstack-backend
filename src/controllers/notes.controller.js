@@ -1,16 +1,4 @@
-import jwt from 'jsonwebtoken';
 import Note from '../models/note.model.js';
-import User from '../models/user.model.js';
-
-const getTokenFrom = request => {
-  const authorization = request.get('authorization');
-
-  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
-    return authorization.substring(7);
-  }
-
-  return null;
-};
 
 /**
  * Handle GET /api/notes
@@ -19,7 +7,8 @@ const getTokenFrom = request => {
  * @param {Function} next
  */
 export const getNotes = async (request, response) => {
-  const notes = await Note.find({})
+  const user = request.user;
+  const notes = await Note.find({ user: user._id })
     .populate('user', { name: 1, email: 1 });
 
   response.status(200).json({ data: notes });
@@ -32,18 +21,10 @@ export const getNotes = async (request, response) => {
  * @param {Function} next
  */
 export const createNote = async (request, response) => {
-  const token = getTokenFrom(request);
-  const decoderToken = jwt.verify(token, process.env.SECRET);
-
+  const user = request.user;
   const { content, important } = request.body;
-  const user = await User.findOne({ email: decoderToken.email });
-
-  if (!token && !decoderToken.email || !user) {
-    return response.status(401).json({ error: '401', data: { message: 'Unauthorized, missing token or invalid' } });
-  }
 
   const newNote = new Note({ content, important, user: user._id });
-
   const note = await newNote.save();
 
   user.notes = [...user.notes, note._id];
@@ -59,9 +40,9 @@ export const createNote = async (request, response) => {
  * @param {Function} next
  */
 export const getNote = async(request, response) => {
+  const user = request.user;
   const uid = request.params.id;
-  const note = await Note.findById(uid)
-    .populate('user', { name: 1, email: 1 });
+  const note = await Note.findOne({ _id: uid, user: user._id });
 
   if (!note) {
     return response.status(404).json({ 'message': `Not found note ${uid}` });
@@ -77,6 +58,7 @@ export const getNote = async(request, response) => {
  * @param {Function} next
  */
 export const updateNote = async(request, response) => {
+  const user = request.user;
   const uid = request.params.id;
   const { important, content } = request.body;
 
@@ -84,8 +66,12 @@ export const updateNote = async(request, response) => {
     return response.status(400).json({ 'message': `Error not found all params` });
   }
 
-  const data = await Note.findByIdAndUpdate(uid, { important, content }, { new: true });
+  const note = await Note.findOne({ _id: uid, user: user._id });
+  if (!note) {
+    return response.status(404).json({ 'message': `Not found note ${uid}` });
+  }
 
+  const data = await Note.findByIdAndUpdate(uid, { important, content }, { new: true });
   if (!data) {
     return response.status(404).json({ 'message': `Not found note ${uid}` });
   }
@@ -100,6 +86,7 @@ export const updateNote = async(request, response) => {
  * @param {Function} error
  */
 export const modifyNote = async(request, response) => {
+  const user = request.user;
   const uid = request.params.id;
   const body = request.body;
   let noteToUpdated = {};
@@ -116,7 +103,11 @@ export const modifyNote = async(request, response) => {
     noteToUpdated.content = body.content;
   }
 
-  const data = await Note.findOneAndUpdate({ _id: uid }, noteToUpdated, { new: true });
+  const data = await Note.findOneAndUpdate(
+    { _id: uid, user: user.id },
+    noteToUpdated,
+    { new: true }
+  );
 
   if (!data) {
     return response.status(404).json({ 'message': `Not found note ${uid}` });
@@ -132,6 +123,7 @@ export const modifyNote = async(request, response) => {
  * @param {Function} next
  */
 export const removeNote = async(request, response) => {
+  const user = request.user;
   const uid = request.params.id;
   const note = await Note.findById(uid);
 
@@ -139,6 +131,11 @@ export const removeNote = async(request, response) => {
     return response.status(404).json({ 'message': `Not found note ${uid}.` });
   }
 
-  const data = await Note.findByIdAndUpdate(uid, { delete: true }, { new: true });
+  const data = await Note.findOneAndUpdate(
+    { _id:uid, user: user.id },
+    { delete: true },
+    { new: true }
+  );
+
   response.status(200).json({ data });
 };

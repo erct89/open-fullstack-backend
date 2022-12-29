@@ -1,21 +1,23 @@
 import { Router } from 'express';
 import * as noteController from '../controllers/notes.controller.js';
+import validateAuthorization from '../middlewares/validateAuthorization.middleware.js';
+import validateFields from '../middlewares/validateFields.middleware.js';
 
 export const router = new Router();
 
-/**
- * GET /notes
- */
-router.get('/', noteController.getNotes);
+const commonValidations = [validateAuthorization, validateFields];
 
-router.post('/', noteController.createNote);
 
-router.get('/:id', noteController.getNote);
+router.get('/', commonValidations, noteController.getNotes);
 
-router.put('/:id', noteController.updateNote);
+router.post('/', commonValidations, noteController.createNote);
 
-router.patch('/:id', noteController.modifyNote);
+router.get('/:id', commonValidations, noteController.getNote);
 
-router.delete('/:id', noteController.removeNote);
+router.put('/:id', commonValidations, noteController.updateNote);
+
+router.patch('/:id', commonValidations, noteController.modifyNote);
+
+router.delete('/:id', commonValidations, noteController.removeNote);
 
 export default router;
