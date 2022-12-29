@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import supertest from 'supertest';
 import Server from '../src/models/server.model.js';
 import mock from './mocks/users.mock.js';
@@ -14,7 +15,7 @@ describe('Suite User api', () => {
 
   beforeEach(async() => {
     await helpers.reset();
-    await helpers.initialize(mock.DB_INTIALIZED);
+    await helpers.initialize();
   });
 
   describe('GET /api/users', () => {
@@ -114,5 +115,10 @@ describe('Suite User api', () => {
         .send(MOCK_DUPLICATE_USER)
         .expect(400);
     });
+  });
+
+  afterAll(async() => {
+    await helpers.reset();
+    mongoose.connection.close();
   });
 });

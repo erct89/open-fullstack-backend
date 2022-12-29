@@ -14,11 +14,14 @@ export const getNotes = async() => {
   return notes;
 };
 
-export const resetNotes = async() => await Note.deleteMany({});
+export const resetNotes = async() => {
+  await userHelpers.reset();
+  await Note.deleteMany({});
+};
 
 export const initialize = async() => {
   await userHelpers.reset();
-  await userHelpers.initialize([mocks.INITIAL_USER]);
+  await userHelpers.initialize();
 
   const users = await userHelpers.getAllUsers();
   const user = users[0];

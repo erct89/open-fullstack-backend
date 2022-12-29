@@ -15,7 +15,7 @@ describe('Suit notes api', () => {
 
   beforeEach(async () => {
     await resetNotes();
-    user = await initialize();
+    await initialize();
 
     const userResponse = await api.post('/api/login')
       .send({
@@ -296,7 +296,8 @@ describe('Suit notes api', () => {
 
   });
 
-  afterAll(() => {
+  afterAll(async() => {
+    await resetNotes();
     mongoose.connection.close();
   });
 });
