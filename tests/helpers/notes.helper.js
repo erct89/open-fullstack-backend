@@ -15,16 +15,12 @@ export const getNotes = async() => {
 };
 
 export const resetNotes = async() => {
-  await userHelpers.reset();
   await Note.deleteMany({});
 };
 
 export const initialize = async() => {
-  await userHelpers.reset();
-  await userHelpers.initialize();
-
-  const users = await userHelpers.getAllUsers();
-  const user = users[0];
+  await userHelpers.initialize(mocks.INITIAL_USER);
+  const user = await userHelpers.getUser(mocks.INITIAL_USER);
 
   await Promise.all(mocks.INITIAL_NOTES.map(async note => await (new Note({ ...note, user: user._id })).save()));
 
