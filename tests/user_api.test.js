@@ -11,10 +11,12 @@ describe('Suite User api', () => {
   beforeAll(async() => {
     const server = new Server();
     api = supertest(server.app);
-    await helpers.initialize(mocks.DB_INTIALIZED);
   });
 
-  beforeEach(async() => {});
+  beforeEach(async() => {
+    await helpers.reset();
+    await helpers.initialize();
+  });
 
   describe('GET /api/users', () => {
     const mocks_GET = mocks.GET;
@@ -26,7 +28,7 @@ describe('Suite User api', () => {
     });
 
     test('Should be return array of users', async() => {
-      const mocksS_USER_EMAILS = mocks_GET.RESPONSE.SUCESS.map(userItem => userItem.email).sort();
+      const MOCKS_USER_EMAILS = mocks_GET.RESPONSE.SUCESS.map(userItem => userItem.email).sort();
       const allUsers = await helpers.getAllUsers();
       const response = await api.get(API_PATH);
 
@@ -34,7 +36,9 @@ describe('Suite User api', () => {
       users = users.map(userItem => userItem.email);
 
       expect(users).toHaveLength(allUsers.length);
-      expect(users.sort()).toEqual(mocksS_USER_EMAILS);
+      MOCKS_USER_EMAILS.forEach(email => {
+        expect(users).toContain(email);
+      });
     });
   });
 

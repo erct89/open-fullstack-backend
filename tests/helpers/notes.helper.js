@@ -1,5 +1,4 @@
 import { Note } from '../../src/models/note.model.js';
-import userHelpers from './users.helpers.js';
 import mocks from '../mocks/notes.mock.js';
 
 export const generateRandomID = async(user) => {
@@ -18,13 +17,15 @@ export const resetNotes = async() => {
   await Note.deleteMany({});
 };
 
-export const initialize = async() => {
-  await userHelpers.initialize(mocks.INITIAL_USER);
-  const user = await userHelpers.getUser(mocks.INITIAL_USER);
-
-  await Promise.all(mocks.INITIAL_NOTES.map(async note => await (new Note({ ...note, user: user._id })).save()));
-
-  return user;
+export const initialize = async(user) => {
+  await Promise.all(
+    mocks.INITIAL_NOTES.map(
+      async note => {
+        const newNote = new Note({ ...note, user: user._id });
+        return await newNote.save();
+      }
+    )
+  );
 };
 
 export default {

@@ -1,29 +1,31 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
-import { generateRandomID, initialize, resetNotes, getNotes } from './helpers/notes.helper.js';
 import Server from '../src/models/server.model.js';
 
 import { mocks } from './mocks/notes.mock.js';
+import notesHelpers from './helpers/notes.helper.js';
+import usersHelpers from './helpers/users.helpers.js';
 
 describe('Suit notes api', () => {
   let api, user, token;
 
-  beforeAll(() => {
+  beforeAll(async() => {
     const server = new Server();
     api = supertest(server.app);
+
   });
 
   beforeEach(async () => {
-    await resetNotes();
-    await initialize();
+    await usersHelpers.reset();
+    await usersHelpers.initialize();
 
-    const userResponse = await api.post('/api/login')
-      .send({
-        email: mocks.INITIAL_USER.email,
-        password: mocks.INITIAL_USER.password
-      });
+    let users = await usersHelpers.getAllUsers();
+    user = users[0];
 
-    token = `Bearer ${userResponse.body.data.token}`;
+    await notesHelpers.resetNotes();
+    await notesHelpers.initialize(user);
+
+    token = `Bearer ${usersHelpers.generateToken(user)}`;
   });
 
   describe('GET /api/notes', () => {
@@ -44,7 +46,8 @@ describe('Suit notes api', () => {
 
     test('Return all notes', async() => {
       const response = await api.get('/api/notes')
-        .set('Authorization', token);
+        .set('Authorization', token)
+        .expect(200);
       const notes = response.body.data;
 
       expect(notes).toHaveLength(mocks.INITIAL_NOTES.length);
@@ -53,6 +56,7 @@ describe('Suit notes api', () => {
     test('The first note is about HTTP methods', async() => {
       const response = await api.get('/api/notes')
         .set('Authorization', token);
+
       const content = response.body.data.map(note => note.content);
       const contentFirstNote = mocks.INITIAL_NOTES[0].content;
 
@@ -65,8 +69,8 @@ describe('Suit notes api', () => {
 
     test('Notes are returned json', async() => {
       await api.post('/api/notes')
-        .send({ ...mocks.NEW_NOTE, user: user._id })
         .set('Authorization', token)
+        .send(mocks.NEW_NOTE)
         .expect(200)
         .expect('Content-Type', /application\/json/);
     });
@@ -75,7 +79,7 @@ describe('Suit notes api', () => {
       await api.post('/api/notes')
         .set('Authorization', token)
         .send(mocks.NEW_NOTE);
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
 
       expect(allNotes).toHaveLength(mocks.INITIAL_NOTES.length + 1);
     });
@@ -84,7 +88,7 @@ describe('Suit notes api', () => {
       await api.post('/api/notes')
         .set('Authorization', token)
         .send(mocks.NEW_NOTE);
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
 
       const allNotesContent = allNotes.map(note => note.content);
 
@@ -104,7 +108,7 @@ describe('Suit notes api', () => {
   describe('GET /api/notes/:id', () => {
 
     test('Note returned a json', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const firstNote = allNotes[0];
 
       await api.get(`/api/notes/${firstNote._id}`)
@@ -114,7 +118,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should return a note', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const note = allNotes[0];
 
       const response = await api.get(`/api/notes/${note._id}`)
@@ -124,7 +128,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should return error, when get not exist id note', async() => {
-      const fakeUID = await generateRandomID(user);
+      const fakeUID = await notesHelpers.generateRandomID(user);
       await api.get(`/api/notes/${fakeUID}`)
         .set('Authorization', token)
         .expect(404)
@@ -136,7 +140,7 @@ describe('Suit notes api', () => {
   describe('PUT /api/notes/:id', () => {
 
     test('Note returned a json', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const selectedNoteID = String(allNotes[0]._id);
 
       await api.put(`/api/notes/${selectedNoteID}`)
@@ -147,7 +151,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should modify content of note, when exist note', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const selectedNoteID = String(allNotes[0]._id);
 
       const response = await api.put(`/api/notes/${selectedNoteID}`)
@@ -159,7 +163,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should returned a 404 error, when not exist note', async() => {
-      const selectedNoteID = await generateRandomID(user);
+      const selectedNoteID = await notesHelpers.generateRandomID(user);
 
       await api.put(`/api/notes/${selectedNoteID}`)
         .set('Authorization', token)
@@ -169,7 +173,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should returned a 400 error, when body request is not completed', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const selectedNoteID = String(allNotes[0]._id);
 
       await api.put(`/api/notes/${selectedNoteID}`)
@@ -183,7 +187,7 @@ describe('Suit notes api', () => {
   describe('PATCH /api/notes/:id', () => {
 
     test('Note returned a json', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const selectedNoteID = String(allNotes[0]._id);
 
       await api.patch(`/api/notes/${selectedNoteID}`)
@@ -193,7 +197,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should modify property content of note, when exist note', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const selectedNoteID = String(allNotes[0]._id);
 
       const response = await api.patch(`/api/notes/${selectedNoteID}`)
@@ -206,7 +210,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should modify property important of note, when exist note', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const selectedNoteID = String(allNotes[0]._id);
 
       const response = await api.patch(`/api/notes/${selectedNoteID}`)
@@ -219,7 +223,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should modify property delete of note, when exist note', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const selectedNoteID = String(allNotes[0]._id);
 
       const response = await api.patch(`/api/notes/${selectedNoteID}`)
@@ -232,7 +236,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should modify any properties of note, when exist note', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const selectedNoteID = String(allNotes[0]._id);
       const body = { ...mocks.PATCH.BODY_DELETE, ...mocks.PATCH.BODY_CONTENT };
 
@@ -246,7 +250,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should returned a error, when exist not note', async() => {
-      const selectedNoteID = await generateRandomID(user);
+      const selectedNoteID = await notesHelpers.generateRandomID(user);
 
       await api.patch(`/api/notes/${selectedNoteID}`)
         .set('Authorization', token)
@@ -259,7 +263,7 @@ describe('Suit notes api', () => {
   describe('DELETE /api/notes/:id', () => {
 
     test('Note returned a json', async() => {
-      const allNotes = await getNotes();
+      const allNotes = await notesHelpers.getNotes();
       const firstNote = String(allNotes[0]._id);
 
       await api.delete(`/api/notes/${firstNote}`)
@@ -269,7 +273,7 @@ describe('Suit notes api', () => {
     });
 
     test('Should remove a note, when exist note', async() => {
-      const startNotes = await getNotes();
+      const startNotes = await notesHelpers.getNotes();
       const firstNote = String(startNotes[0]._id);
 
       const response = await api.delete(`/api/notes/${firstNote}`)
@@ -282,8 +286,8 @@ describe('Suit notes api', () => {
     });
 
     test('Should remove error, when not exist note', async() => {
-      const fakeUID = await generateRandomID(user);
-      let allNotes = await getNotes();
+      const fakeUID = await notesHelpers.generateRandomID(user);
+      let allNotes = await notesHelpers.getNotes();
 
       allNotes = allNotes.map(note => note._id.toString());
 
@@ -297,7 +301,6 @@ describe('Suit notes api', () => {
   });
 
   afterAll(async() => {
-    await resetNotes();
     mongoose.connection.close();
   });
 });

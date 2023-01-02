@@ -26,7 +26,7 @@ export const validateAuthorization = async (request, response, next) => {
   const token = getTokenFrom(request);
   const decoderToken = jwt.verify(token, process.env.SECRET);
 
-  const user = await User.findOne({ email: decoderToken.email });
+  const user = await User.findById(decoderToken.id);
 
   if (!token && !user) {
     return response.status(401).json({ error: '401', data: { message: 'Unauthorized, missing token or invalid' } });

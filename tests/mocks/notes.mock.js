@@ -1,10 +1,5 @@
 
 export const mocks = {
-  INITIAL_USER: {
-    name: 'John Hessel',
-    email: 'john_hessel@gmail.com',
-    password: 'override'
-  },
   INITIAL_NOTES: [
     {
       content: 'Http Get is a method',
@@ -13,7 +8,7 @@ export const mocks = {
       content: 'Comprar pan',
     }
   ],
-  NEW_NOTE: { content: 'Soy la nueva nota' },
+  NEW_NOTE: { content: 'Soy la nueva nota', important: false },
   FAKE_NOTE: { content: 'Fake note' },
   PATCH: {
     BODY_DELETE: {

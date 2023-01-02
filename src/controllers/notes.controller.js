@@ -8,6 +8,7 @@ import Note from '../models/note.model.js';
  */
 export const getNotes = async (request, response) => {
   const user = request.user;
+
   const notes = await Note.find({ user: user._id })
     .populate('user', { name: 1, email: 1 });
 
